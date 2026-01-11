@@ -22,10 +22,10 @@ export function ExportButtons({ researchId, companyName, disabled }: ExportButto
         onClick={exportJson}
         disabled={disabled || isExporting}
         className={cn(
-          'flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-md transition-colors',
+          'flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200',
           disabled || isExporting
-            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-            : 'bg-white hover:bg-gray-50 text-gray-700'
+            ? 'bg-navy-100 text-navy-400 cursor-not-allowed'
+            : 'bg-white border border-navy-200 text-navy-700 hover:bg-navy-50 hover:border-navy-300 shadow-sm'
         )}
       >
         {isExporting && exportType === 'json' ? (
@@ -39,10 +39,10 @@ export function ExportButtons({ researchId, companyName, disabled }: ExportButto
         onClick={exportPdf}
         disabled={disabled || isExporting}
         className={cn(
-          'flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-md transition-colors',
+          'flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200',
           disabled || isExporting
-            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-            : 'bg-white hover:bg-gray-50 text-gray-700'
+            ? 'bg-navy-100 text-navy-400 cursor-not-allowed'
+            : 'bg-primary-500 text-white hover:bg-primary-600 shadow-sm hover:shadow-md'
         )}
       >
         {isExporting && exportType === 'pdf' ? (
@@ -52,7 +52,9 @@ export function ExportButtons({ researchId, companyName, disabled }: ExportButto
         )}
         PDF
       </button>
-      {error && <span className="text-sm text-red-600">{error}</span>}
+      {error && (
+        <span className="text-sm text-red-600 bg-red-50 px-3 py-1 rounded-lg">{error}</span>
+      )}
     </div>
   );
 }

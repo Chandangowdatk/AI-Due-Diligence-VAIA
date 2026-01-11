@@ -2,6 +2,7 @@
 
 import uuid
 import logging
+import asyncio
 from datetime import datetime
 
 from fastapi import APIRouter, HTTPException, BackgroundTasks
@@ -12,6 +13,7 @@ from app.models.responses import ResearchStatusResponse, SectionStatusInfo, Sect
 from app.models.sections import SECTION_CONFIGS
 from app.storage.memory_store import report_store
 from app.agents.orchestrator import process_report, SECTION_ORDER
+from app.agents.company_classifier import classify_company
 
 logger = logging.getLogger(__name__)
 
@@ -57,9 +59,21 @@ async def start_research(
     # Save to storage
     report_store.create_report(report)
     
-    # Determine if company is public (simple heuristic for now)
-    # In production, this would use a company lookup service
-    is_public = _detect_public_company(request.company_name)
+    # Use AI to classify company as public or private and detect region
+    # This runs quickly and determines the search strategy
+    try:
+        classification = await classify_company(request.company_name)
+        is_public = classification["is_public"]
+        region = classification.get("region", "OTHER")
+        logger.info(f"Company '{request.company_name}' classified as: "
+                   f"{'PUBLIC' if is_public else 'PRIVATE'} "
+                   f"(region: {region}, "
+                   f"confidence: {classification['confidence']}, "
+                   f"ticker: {classification.get('ticker', 'N/A')})")
+    except Exception as e:
+        logger.warning(f"Company classification failed, defaulting to private: {e}")
+        is_public = False
+        region = "OTHER"
     
     # Start background processing
     background_tasks.add_task(
@@ -67,6 +81,7 @@ async def start_research(
         report_id=research_id,
         company_name=request.company_name,
         is_public=is_public,
+        region=region,
         sections=request.sections,
     )
     
@@ -177,43 +192,3 @@ async def get_full_report(research_id: str):
         raise HTTPException(status_code=404, detail="Research not found")
     
     return report
-
-
-def _detect_public_company(company_name: str) -> bool:
-    """
-    Simple heuristic to detect if a company is publicly traded.
-    
-    In production, this would use a company database or API.
-    For now, we check for common public company indicators.
-    """
-    name_lower = company_name.lower()
-    
-    # Known public companies (expand this list)
-    public_companies = [
-        "apple", "microsoft", "google", "alphabet", "amazon", "meta", "facebook",
-        "tesla", "nvidia", "netflix", "adobe", "salesforce", "oracle", "ibm",
-        "intel", "amd", "qualcomm", "cisco", "walmart", "target", "costco",
-        "jpmorgan", "bank of america", "wells fargo", "goldman sachs",
-        "johnson & johnson", "pfizer", "merck", "abbvie", "eli lilly",
-        "exxon", "chevron", "conocophillips", "shell",
-        "coca-cola", "pepsi", "pepsico", "procter & gamble", "unilever",
-        "disney", "comcast", "at&t", "verizon", "t-mobile",
-        "boeing", "lockheed martin", "raytheon", "general dynamics",
-        "ford", "general motors", "toyota", "honda",
-        "visa", "mastercard", "american express", "paypal",
-        "uber", "lyft", "airbnb", "doordash", "instacart",
-        "snowflake", "datadog", "cloudflare", "mongodb", "elastic",
-        "reliance", "tata", "infosys", "wipro", "hdfc", "icici",
-    ]
-    
-    for company in public_companies:
-        if company in name_lower:
-            return True
-    
-    # Check for common suffixes indicating public companies
-    public_suffixes = [" inc", " inc.", " corp", " corp.", " ltd", " plc", " ag", " sa"]
-    for suffix in public_suffixes:
-        if name_lower.endswith(suffix):
-            return True
-    
-    return False

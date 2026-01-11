@@ -37,6 +37,7 @@ async def process_report(
     report_id: str,
     company_name: str,
     is_public: bool = False,
+    region: str = "OTHER",
     sections: Optional[list[SectionId]] = None,
 ) -> None:
     """
@@ -51,9 +52,11 @@ async def process_report(
         report_id: Unique report identifier
         company_name: Company to research
         is_public: Whether company is publicly traded
+        region: Company's primary region (USA, INDIA, UK, etc.)
         sections: Specific sections to process (None = all)
     """
-    logger.info(f"Starting report processing: {report_id} for {company_name}")
+    logger.info(f"Starting report processing: {report_id} for {company_name} "
+               f"(public={is_public}, region={region})")
     
     # Get or create report
     report = report_store.get_report(report_id)
@@ -76,6 +79,7 @@ async def process_report(
                 section_id=section_id,
                 company_name=company_name,
                 is_public=is_public,
+                region=region,
             )
         
         # Mark report as complete
@@ -101,6 +105,7 @@ async def _process_section(
     section_id: SectionId,
     company_name: str,
     is_public: bool,
+    region: str = "OTHER",
 ) -> None:
     """
     Process a single section through the Research → Extract → Write pipeline.
@@ -130,6 +135,7 @@ async def _process_section(
                 company_name=company_name,
                 section_id=section_id,
                 is_public=is_public,
+                region=region,
                 max_iterations=3,
             ),
             timeout=SECTION_TIMEOUT,

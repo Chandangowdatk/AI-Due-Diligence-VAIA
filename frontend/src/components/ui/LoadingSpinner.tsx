@@ -11,9 +11,9 @@ interface LoadingSpinnerProps {
 
 export function LoadingSpinner({ size = 24, className, text }: LoadingSpinnerProps) {
   return (
-    <div className={cn('flex flex-col items-center justify-center gap-2', className)}>
-      <Loader2 size={size} className="animate-spin text-blue-600" />
-      {text && <span className="text-sm text-gray-600">{text}</span>}
+    <div className={cn('flex flex-col items-center justify-center gap-3', className)}>
+      <Loader2 size={size} className="animate-spin text-primary-500" />
+      {text && <span className="text-sm font-medium text-navy-600">{text}</span>}
     </div>
   );
 }

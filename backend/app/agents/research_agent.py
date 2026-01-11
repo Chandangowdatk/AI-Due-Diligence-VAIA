@@ -25,6 +25,7 @@ async def research_section(
     company_name: str,
     section_id: SectionId,
     is_public: bool = False,
+    region: str = "OTHER",
     max_iterations: int = 3,
 ) -> dict:
     """
@@ -34,6 +35,7 @@ async def research_section(
         company_name: Name of the company to research
         section_id: Which DD section to research
         is_public: Whether the company is publicly traded
+        region: Company's primary region (USA, INDIA, UK, etc.)
         max_iterations: Maximum search-think cycles
         
     Returns:
@@ -43,17 +45,19 @@ async def research_section(
             - search_iterations: int - Number of search cycles
             - data_gaps: list[str] - Information not found
     """
-    logger.info(f"Starting research for {company_name} - Section: {section_id.value}")
+    logger.info(f"Starting research for {company_name} - Section: {section_id.value} "
+               f"(public={is_public}, region={region})")
     
     # CRITICAL: Set the current company for query validation
     # This ensures all search queries include the company name
     set_current_company(company_name)
     
-    # Get section-specific system prompt
+    # Get section-specific system prompt with region-aware source prioritization
     system_prompt = get_research_prompt(
         section_id=section_id,
         company_name=company_name,
         is_public=is_public,
+        region=region,
         max_iterations=max_iterations,
     )
     

@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
-  title: 'Due Diligence Platform',
-  description: 'AI-powered company due diligence research',
+  title: 'DueDiligence - AI-Powered Company Research',
+  description: 'Get comprehensive due diligence reports on any company in minutes. AI-powered research platform for investment professionals.',
 };
 
 export default function RootLayout({
@@ -12,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-gray-50">{children}</body>
+    <html lang="en" className="scroll-smooth">
+      <body className="min-h-screen bg-white antialiased">{children}</body>
     </html>
   );
 }

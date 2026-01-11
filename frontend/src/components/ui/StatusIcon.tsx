@@ -15,17 +15,17 @@ export function StatusIcon({ status, size = 16, className }: StatusIconProps) {
 
   switch (status) {
     case 'complete':
-      return <CheckCircle {...iconProps} className={cn('text-green-600', className)} />;
+      return <CheckCircle {...iconProps} className={cn('text-emerald-500', className)} />;
     case 'incomplete':
-      return <AlertCircle {...iconProps} className={cn('text-yellow-600', className)} />;
+      return <AlertCircle {...iconProps} className={cn('text-amber-500', className)} />;
     case 'researching':
     case 'writing':
-      return <Loader2 {...iconProps} className={cn('text-blue-600 animate-spin', className)} />;
+      return <Loader2 {...iconProps} className={cn('text-primary-500 animate-spin', className)} />;
     case 'error':
-      return <XCircle {...iconProps} className={cn('text-red-600', className)} />;
+      return <XCircle {...iconProps} className={cn('text-red-500', className)} />;
     case 'timeout':
-      return <Clock {...iconProps} className={cn('text-orange-600', className)} />;
+      return <Clock {...iconProps} className={cn('text-orange-500', className)} />;
     default:
-      return <Circle {...iconProps} className={cn('text-gray-400', className)} />;
+      return <Circle {...iconProps} className={cn('text-navy-300', className)} />;
   }
 }

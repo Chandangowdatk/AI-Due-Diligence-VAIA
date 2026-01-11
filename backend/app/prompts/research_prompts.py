@@ -78,18 +78,119 @@ For PRIVATE companies, prioritize sources in this order:
 5. Industry reports and analyst coverage
 """
 
-# Source priority for public companies
-PUBLIC_COMPANY_SOURCES = """
-For PUBLIC companies, prioritize sources in this order:
-1. SEC filings (10-K, 10-Q, 8-K) - MOST RELIABLE
+# Source priority for public companies by region
+PUBLIC_COMPANY_SOURCES_BY_REGION = {
+    "USA": """
+For US PUBLIC companies, prioritize sources in this order:
+1. SEC filings (10-K, 10-Q, 8-K, proxy statements) - MOST RELIABLE
 2. Official investor relations pages
-3. Stock exchange disclosures (NYSE, NASDAQ, BSE, NSE)
+3. NYSE/NASDAQ disclosures
 4. Yahoo Finance, Bloomberg, Reuters
 5. Company press releases
-6. Analyst reports
+6. Analyst reports from major firms
 
-IMPORTANT: For financial data, ALWAYS verify against official SEC filings when available.
+IMPORTANT: For financial data, ALWAYS verify against official SEC filings (EDGAR database).
+""",
+    
+    "INDIA": """
+For INDIAN PUBLIC companies, prioritize sources in this order:
+1. BSE/NSE filings and disclosures - MOST RELIABLE
+2. SEBI (Securities and Exchange Board of India) filings
+3. Ministry of Corporate Affairs (MCA) filings
+4. Official investor relations pages
+5. Moneycontrol, Economic Times, Business Standard
+6. Company annual reports (available on BSE/NSE websites)
+7. Screener.in, Trendlyne for financial data
+
+IMPORTANT: For financial data, verify against BSE/NSE official filings and annual reports.
+Search for: "[COMPANY] BSE filing", "[COMPANY] NSE annual report", "[COMPANY] SEBI disclosure"
+""",
+    
+    "UK": """
+For UK PUBLIC companies, prioritize sources in this order:
+1. Companies House filings - MOST RELIABLE
+2. London Stock Exchange (LSE) disclosures
+3. FCA (Financial Conduct Authority) filings
+4. Official investor relations pages
+5. Financial Times, Reuters UK
+6. Company annual reports
+
+IMPORTANT: For financial data, verify against Companies House and LSE filings.
+""",
+    
+    "EUROPE": """
+For EUROPEAN PUBLIC companies, prioritize sources in this order:
+1. Local stock exchange filings (Euronext, Frankfurt/XETRA, SIX Swiss)
+2. National securities regulator filings
+3. Official investor relations pages
+4. Reuters, Bloomberg Europe
+5. Company annual reports
+6. Local financial news sources
+
+IMPORTANT: Verify against official stock exchange and regulatory filings.
+""",
+    
+    "CHINA": """
+For CHINESE PUBLIC companies, prioritize sources in this order:
+1. Shanghai/Shenzhen Stock Exchange filings - MOST RELIABLE
+2. Hong Kong Stock Exchange (HKEX) filings (for HK-listed)
+3. CSRC (China Securities Regulatory Commission) filings
+4. Official investor relations pages
+5. South China Morning Post, Caixin, Reuters
+6. Company annual reports
+
+IMPORTANT: For financial data, verify against official exchange filings.
+Note: Some Chinese companies also file with SEC if ADR-listed in US.
+""",
+    
+    "JAPAN": """
+For JAPANESE PUBLIC companies, prioritize sources in this order:
+1. Tokyo Stock Exchange (TSE) filings - MOST RELIABLE
+2. EDINET (Electronic Disclosure for Investors' NETwork)
+3. Official investor relations pages
+4. Nikkei, Reuters Japan
+5. Company annual reports (Yuho filings)
+
+IMPORTANT: For financial data, verify against TSE and EDINET filings.
+""",
+    
+    "AUSTRALIA": """
+For AUSTRALIAN PUBLIC companies, prioritize sources in this order:
+1. ASX (Australian Securities Exchange) announcements - MOST RELIABLE
+2. ASIC (Australian Securities and Investments Commission) filings
+3. Official investor relations pages
+4. Australian Financial Review, Reuters
+5. Company annual reports
+
+IMPORTANT: For financial data, verify against ASX announcements.
+""",
+    
+    "CANADA": """
+For CANADIAN PUBLIC companies, prioritize sources in this order:
+1. SEDAR+ (System for Electronic Document Analysis and Retrieval) - MOST RELIABLE
+2. TSX/TSX Venture Exchange filings
+3. Official investor relations pages
+4. Globe and Mail, Financial Post, Reuters
+5. Company annual reports
+
+IMPORTANT: For financial data, verify against SEDAR+ filings.
+""",
+    
+    "OTHER": """
+For PUBLIC companies in other regions, prioritize sources in this order:
+1. Local stock exchange filings and disclosures
+2. National securities regulator filings
+3. Official investor relations pages
+4. Bloomberg, Reuters, local financial news
+5. Company annual reports
+6. International analyst coverage
+
+IMPORTANT: Always try to find official regulatory filings for the company's home country.
 """
+}
+
+# Default for backward compatibility
+PUBLIC_COMPANY_SOURCES = PUBLIC_COMPANY_SOURCES_BY_REGION["USA"]
 
 # Section-specific requirements
 SECTION_REQUIREMENTS = {
@@ -375,13 +476,23 @@ def get_research_prompt(
     section_id: SectionId,
     company_name: str,
     is_public: bool = False,
+    region: str = "OTHER",
     max_iterations: int = 3,
 ) -> str:
     """Generate the research agent prompt for a specific section."""
     
     section_name = section_id.value.replace("_", " ").title()
     company_type = "PUBLIC" if is_public else "PRIVATE"
-    source_priority = PUBLIC_COMPANY_SOURCES if is_public else PRIVATE_COMPANY_SOURCES
+    
+    # Get region-specific source priority for public companies
+    if is_public:
+        source_priority = PUBLIC_COMPANY_SOURCES_BY_REGION.get(
+            region.upper(), 
+            PUBLIC_COMPANY_SOURCES_BY_REGION["OTHER"]
+        )
+    else:
+        source_priority = PRIVATE_COMPANY_SOURCES
+    
     section_requirements = SECTION_REQUIREMENTS.get(section_id, "Gather comprehensive information for this section.")
     
     return RESEARCH_AGENT_SYSTEM_PROMPT.format(
