@@ -1,0 +1,82 @@
+/* Print-specific styles for PDF export */
+
+@media print {
+  /* Hide non-printable elements */
+  .no-print,
+  .sidebar,
+  .export-buttons,
+  button,
+  nav {
+    display: none !important;
+  }
+
+  /* Reset page margins */
+  @page {
+    margin: 1in;
+    size: letter;
+  }
+
+  /* Ensure content fills page */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  /* Page breaks */
+  .section {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+
+  /* Charts should not break */
+  .chart-container {
+    page-break-inside: avoid;
+    max-height: 400px;
+  }
+
+  /* Tables */
+  table {
+    page-break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  /* Links show URL */
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #666;
+  }
+
+  /* Source citations */
+  .source-citation {
+    font-size: 9pt;
+    color: #666;
+  }
+
+  /* Header for each page */
+  .print-header {
+    position: running(header);
+    font-size: 10pt;
+    color: #666;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+  }
+
+  /* Footer for each page */
+  .print-footer {
+    position: running(footer);
+    font-size: 9pt;
+    color: #999;
+    text-align: center;
+  }
+}
