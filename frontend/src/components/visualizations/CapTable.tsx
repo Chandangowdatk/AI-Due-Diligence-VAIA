@@ -56,6 +56,7 @@ export function CapTable({ data, title }: CapTableProps) {
                 nameKey="name"
                 label={({ name, value }) => `${value.toFixed(1)}%`}
                 labelLine={{ stroke: '#9ca3af', strokeWidth: 1 }}
+                isAnimationActive={false}
               >
                 {sortedData.map((entry, index) => (
                   <Cell 

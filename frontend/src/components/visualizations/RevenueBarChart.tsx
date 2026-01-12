@@ -83,7 +83,7 @@ export function RevenueBarChart({ data, title }: RevenueBarChartProps) {
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                 }}
               />
-              <Bar dataKey="revenue" name="Revenue" radius={[0, 4, 4, 0]} maxBarSize={35}>
+              <Bar dataKey="revenue" name="Revenue" radius={[0, 4, 4, 0]} maxBarSize={35} isAnimationActive={false}>
                 {dataWithPercentage.map((_, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
@@ -113,6 +113,7 @@ export function RevenueBarChart({ data, title }: RevenueBarChartProps) {
                 nameKey="segment"
                 label={({ segment, percentage }) => `${percentage.toFixed(0)}%`}
                 labelLine={{ stroke: '#9ca3af', strokeWidth: 1 }}
+                isAnimationActive={false}
               >
                 {dataWithPercentage.map((_, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="white" strokeWidth={2} />

@@ -43,6 +43,7 @@ export function FundingLineChart({ data, title }: FundingLineChartProps) {
             stroke="#3b82f6"
             strokeWidth={2}
             name="Funding Amount"
+            isAnimationActive={false}
           />
           {data.some((d) => d.valuation) && (
             <Line
@@ -52,6 +53,7 @@ export function FundingLineChart({ data, title }: FundingLineChartProps) {
               strokeWidth={2}
               name="Valuation"
               strokeDasharray="5 5"
+              isAnimationActive={false}
             />
           )}
         </LineChart>

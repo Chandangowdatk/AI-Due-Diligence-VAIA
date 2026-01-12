@@ -1,6 +1,6 @@
 'use client';
 
-import { Download, FileJson, FileText, Loader2 } from 'lucide-react';
+import { Download, FileJson, FileText, Loader2, Share2 } from 'lucide-react';
 import { useExport } from '@/hooks';
 import { cn } from '@/lib/utils';
 
@@ -17,43 +17,45 @@ export function ExportButtons({ researchId, companyName, disabled }: ExportButto
   );
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-3">
       <button
         onClick={exportJson}
         disabled={disabled || isExporting}
         className={cn(
-          'flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200',
+          'flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all duration-300 group',
           disabled || isExporting
-            ? 'bg-navy-100 text-navy-400 cursor-not-allowed'
-            : 'bg-white border border-navy-200 text-navy-700 hover:bg-navy-50 hover:border-navy-300 shadow-sm'
+            ? 'bg-neutral-100 dark:bg-white/5 text-neutral-400 dark:text-neutral-600 cursor-not-allowed'
+            : 'bg-white/50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 hover:bg-neutral-100 dark:hover:bg-white/10 hover:border-neutral-300 dark:hover:border-white/20'
         )}
       >
         {isExporting && exportType === 'json' ? (
-          <Loader2 size={16} className="animate-spin" />
+          <Loader2 size={16} className="animate-spin text-neutral-500" />
         ) : (
-          <FileJson size={16} />
+          <Download className="w-4 h-4 text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white" />
         )}
-        JSON
+        <span className="hidden sm:inline font-medium text-neutral-700 dark:text-neutral-300 group-hover:text-neutral-900 dark:group-hover:text-white">
+          Export
+        </span>
       </button>
       <button
         onClick={exportPdf}
         disabled={disabled || isExporting}
         className={cn(
-          'flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200',
+          'flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all duration-300',
           disabled || isExporting
-            ? 'bg-navy-100 text-navy-400 cursor-not-allowed'
-            : 'bg-primary-500 text-white hover:bg-primary-600 shadow-sm hover:shadow-md'
+            ? 'bg-neutral-100 dark:bg-white/5 text-neutral-400 dark:text-neutral-600 cursor-not-allowed'
+            : 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 hover:bg-brand-primary/90 hover:shadow-brand-primary/40'
         )}
       >
         {isExporting && exportType === 'pdf' ? (
           <Loader2 size={16} className="animate-spin" />
         ) : (
-          <FileText size={16} />
+          <Share2 className="w-4 h-4" />
         )}
-        PDF
+        <span className="hidden sm:inline font-medium">Share</span>
       </button>
       {error && (
-        <span className="text-sm text-red-600 bg-red-50 px-3 py-1 rounded-lg">{error}</span>
+        <span className="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 px-3 py-1 rounded-lg">{error}</span>
       )}
     </div>
   );

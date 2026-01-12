@@ -103,6 +103,7 @@ export function FundingTimeline({ data, title }: FundingTimelineProps) {
                   strokeWidth={2}
                   dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 5 }}
                   activeDot={{ r: 7, fill: '#7c3aed' }}
+                  isAnimationActive={false}
                 />
               </LineChart>
             </ResponsiveContainer>

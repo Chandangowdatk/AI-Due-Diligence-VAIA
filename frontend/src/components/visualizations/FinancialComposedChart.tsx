@@ -126,6 +126,7 @@ export function FinancialComposedChart({ data, title }: FinancialComposedChartPr
             name="Revenue" 
             radius={[4, 4, 0, 0]}
             maxBarSize={60}
+            isAnimationActive={false}
           />
           {hasEbitda && (
             <Bar 
@@ -135,6 +136,7 @@ export function FinancialComposedChart({ data, title }: FinancialComposedChartPr
               name="EBITDA" 
               radius={[4, 4, 0, 0]}
               maxBarSize={60}
+              isAnimationActive={false}
             />
           )}
           {hasProfit && (
@@ -145,6 +147,7 @@ export function FinancialComposedChart({ data, title }: FinancialComposedChartPr
               name="Net Profit" 
               radius={[4, 4, 0, 0]}
               maxBarSize={60}
+              isAnimationActive={false}
             />
           )}
           
@@ -159,6 +162,7 @@ export function FinancialComposedChart({ data, title }: FinancialComposedChartPr
               name="EBITDA Margin"
               dot={{ fill: '#f59e0b', strokeWidth: 2, r: 4 }}
               activeDot={{ r: 6 }}
+              isAnimationActive={false}
             />
           )}
           {hasEbitdaMargin && (
@@ -171,6 +175,7 @@ export function FinancialComposedChart({ data, title }: FinancialComposedChartPr
               name="EBITDA Margin"
               dot={{ fill: '#f59e0b', strokeWidth: 2, r: 4 }}
               activeDot={{ r: 6 }}
+              isAnimationActive={false}
             />
           )}
           {hasProfitMargin && (
@@ -183,6 +188,7 @@ export function FinancialComposedChart({ data, title }: FinancialComposedChartPr
               name="Net Profit Margin"
               dot={{ fill: '#16a34a', strokeWidth: 2, r: 4 }}
               activeDot={{ r: 6 }}
+              isAnimationActive={false}
             />
           )}
         </ComposedChart>

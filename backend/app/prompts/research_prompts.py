@@ -1,3 +1,4 @@
+
 """Research Agent system prompts."""
 
 from app.models.enums import SectionId

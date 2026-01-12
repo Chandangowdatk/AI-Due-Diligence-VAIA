@@ -33,6 +33,7 @@ export function OwnershipPieChart({ data, title }: OwnershipPieChartProps) {
             outerRadius={100}
             fill="#8884d8"
             dataKey="value"
+            isAnimationActive={false}
           >
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[entry.type] || COLORS.other} />

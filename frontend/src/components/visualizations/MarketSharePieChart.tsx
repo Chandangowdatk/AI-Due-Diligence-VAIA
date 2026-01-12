@@ -71,6 +71,7 @@ export function MarketSharePieChart({ data, title }: MarketSharePieChartProps) {
                 nameKey="company"
                 label={renderCustomLabel}
                 labelLine={{ stroke: '#9ca3af', strokeWidth: 1 }}
+                isAnimationActive={false}
               >
                 {sortedData.map((entry, index) => (
                   <Cell

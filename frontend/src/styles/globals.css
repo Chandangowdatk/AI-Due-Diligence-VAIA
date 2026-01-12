@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
+  --background: #fafafa;
   --foreground: #0f172a;
   --primary: #f97316;
   --primary-hover: #ea580c;
@@ -15,6 +15,13 @@
   --error: #ef4444;
   --border: #e2e8f0;
   --muted: #f8fafc;
+}
+
+.dark {
+  --background: #050505;
+  --foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.1);
+  --muted: rgba(255, 255, 255, 0.05);
 }
 
 body {
@@ -44,25 +51,26 @@ body {
   background: var(--foreground);
 }
 
-/* Hero gradient background */
-.hero-gradient-bg {
-  background: linear-gradient(135deg, 
-    #fef3c7 0%, 
-    #fed7aa 15%,
-    #fecaca 30%, 
-    #fce7f3 50%, 
-    #e9d5ff 70%, 
-    #c7d2fe 85%,
-    #bfdbfe 100%
-  );
-  background-size: 200% 200%;
-  animation: gradient-shift 15s ease infinite;
+/* Glass Panel Effect */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-@keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+.dark .glass-panel {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animation delays for blob */
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
 }
 
 /* Gradient text */
@@ -101,43 +109,6 @@ body {
   box-shadow: 0 10px 40px rgba(249, 115, 22, 0.4);
 }
 
-/* Outline button with glow */
-.btn-outline-glow {
-  position: relative;
-  background: transparent;
-  border: 1px solid rgba(249, 115, 22, 0.5);
-  transition: all 0.3s ease;
-}
-
-.btn-outline-glow::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.2) 0%, rgba(249, 115, 22, 0.2) 100%);
-  border-radius: inherit;
-  filter: blur(10px);
-  opacity: 0;
-  z-index: -1;
-  transition: opacity 0.3s ease;
-}
-
-.btn-outline-glow:hover {
-  border-color: #f97316;
-  background: rgba(249, 115, 22, 0.1);
-}
-
-.btn-outline-glow:hover::before {
-  opacity: 1;
-}
-
-/* Glass effect */
-.glass {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
 /* Section label style */
 .section-label {
   font-size: 0.75rem;
@@ -148,40 +119,40 @@ body {
 }
 
 /* Markdown content styling - Default */
-.prose { @apply text-gray-900; }
-.prose h1 { @apply text-2xl font-bold mb-4 mt-6 text-gray-900; }
-.prose h2 { @apply text-xl font-semibold mb-3 mt-5 text-gray-900; }
-.prose h3 { @apply text-lg font-medium mb-2 mt-4 text-gray-900; }
-.prose p { @apply mb-3 leading-relaxed text-gray-800; }
-.prose ul { @apply list-disc pl-6 mb-3 text-gray-800; }
-.prose ol { @apply list-decimal pl-6 mb-3 text-gray-800; }
-.prose li { @apply mb-1 text-gray-800; }
-.prose strong { @apply font-semibold text-gray-900; }
-.prose a { @apply text-primary-600 hover:underline; }
-.prose blockquote { @apply border-l-4 border-gray-300 pl-4 italic my-4 text-gray-700; }
+.prose { @apply text-gray-900 dark:text-neutral-300; }
+.prose h1 { @apply text-2xl font-bold mb-4 mt-6 text-gray-900 dark:text-white; }
+.prose h2 { @apply text-xl font-semibold mb-3 mt-5 text-gray-900 dark:text-white; }
+.prose h3 { @apply text-lg font-medium mb-2 mt-4 text-gray-900 dark:text-white; }
+.prose p { @apply mb-3 leading-relaxed text-gray-800 dark:text-neutral-300; }
+.prose ul { @apply list-disc pl-6 mb-3 text-gray-800 dark:text-neutral-300; }
+.prose ol { @apply list-decimal pl-6 mb-3 text-gray-800 dark:text-neutral-300; }
+.prose li { @apply mb-1 text-gray-800 dark:text-neutral-300; }
+.prose strong { @apply font-semibold text-gray-900 dark:text-white; }
+.prose a { @apply text-brand-primary hover:underline; }
+.prose blockquote { @apply border-l-4 border-gray-300 dark:border-neutral-600 pl-4 italic my-4 text-gray-700 dark:text-neutral-400; }
 .prose table { @apply w-full border-collapse mb-4; }
-.prose th { @apply border border-gray-300 px-3 py-2 bg-gray-100 font-semibold text-left text-gray-900; }
-.prose td { @apply border border-gray-300 px-3 py-2 text-gray-800; }
+.prose th { @apply border border-gray-300 dark:border-neutral-700 px-3 py-2 bg-gray-100 dark:bg-neutral-800 font-semibold text-left text-gray-900 dark:text-white; }
+.prose td { @apply border border-gray-300 dark:border-neutral-700 px-3 py-2 text-gray-800 dark:text-neutral-300; }
 
 /* Markdown content styling - Navy theme for report pages */
-.prose-navy { @apply text-navy-700; }
-.prose-navy h1 { @apply text-2xl font-bold mb-4 mt-8 text-navy-900; }
-.prose-navy h2 { @apply text-xl font-bold mb-4 mt-8 text-navy-900; }
-.prose-navy h3 { @apply text-lg font-semibold mb-3 mt-6 text-navy-800; }
-.prose-navy h4 { @apply text-base font-semibold mb-2 mt-5 text-navy-800; }
-.prose-navy p { @apply mb-4 leading-relaxed text-navy-700; }
-.prose-navy ul { @apply list-disc pl-6 mb-4 text-navy-700 space-y-1; }
-.prose-navy ol { @apply list-decimal pl-6 mb-4 text-navy-700 space-y-1; }
-.prose-navy li { @apply text-navy-700; }
-.prose-navy strong { @apply font-semibold text-navy-900; }
-.prose-navy a { @apply text-primary-600 hover:text-primary-700 hover:underline; }
-.prose-navy blockquote { @apply border-l-4 border-primary-300 pl-4 italic my-4 text-navy-600 bg-navy-50 py-2 rounded-r-lg; }
+.prose-navy { @apply text-navy-700 dark:text-neutral-300; }
+.prose-navy h1 { @apply text-2xl font-bold mb-4 mt-8 text-navy-900 dark:text-white; }
+.prose-navy h2 { @apply text-xl font-bold mb-4 mt-8 text-navy-900 dark:text-white; }
+.prose-navy h3 { @apply text-lg font-semibold mb-3 mt-6 text-navy-800 dark:text-neutral-100; }
+.prose-navy h4 { @apply text-base font-semibold mb-2 mt-5 text-navy-800 dark:text-neutral-100; }
+.prose-navy p { @apply mb-4 leading-relaxed text-navy-700 dark:text-neutral-300; }
+.prose-navy ul { @apply list-disc pl-6 mb-4 text-navy-700 dark:text-neutral-300 space-y-1; }
+.prose-navy ol { @apply list-decimal pl-6 mb-4 text-navy-700 dark:text-neutral-300 space-y-1; }
+.prose-navy li { @apply text-navy-700 dark:text-neutral-300; }
+.prose-navy strong { @apply font-semibold text-navy-900 dark:text-white; }
+.prose-navy a { @apply text-brand-primary hover:text-brand-primary/80 hover:underline; }
+.prose-navy blockquote { @apply border-l-4 border-brand-primary/30 pl-4 italic my-4 text-navy-600 dark:text-neutral-400 bg-navy-50 dark:bg-white/5 py-2 rounded-r-lg; }
 .prose-navy table { @apply w-full border-collapse mb-4 rounded-lg overflow-hidden; }
-.prose-navy th { @apply border border-navy-200 px-4 py-3 bg-navy-100 font-semibold text-left text-navy-800; }
-.prose-navy td { @apply border border-navy-200 px-4 py-3 text-navy-700; }
-.prose-navy code { @apply bg-navy-100 text-navy-800 px-1.5 py-0.5 rounded text-sm font-mono; }
+.prose-navy th { @apply border border-navy-200 dark:border-neutral-700 px-4 py-3 bg-navy-100 dark:bg-neutral-800 font-semibold text-left text-navy-800 dark:text-white; }
+.prose-navy td { @apply border border-navy-200 dark:border-neutral-700 px-4 py-3 text-navy-700 dark:text-neutral-300; }
+.prose-navy code { @apply bg-navy-100 dark:bg-neutral-800 text-navy-800 dark:text-neutral-200 px-1.5 py-0.5 rounded text-sm font-mono; }
 .prose-navy pre { @apply bg-navy-900 text-navy-100 p-4 rounded-xl overflow-x-auto mb-4; }
-.prose-navy hr { @apply border-navy-200 my-8; }
+.prose-navy hr { @apply border-navy-200 dark:border-neutral-700 my-8; }
 
 /* Animation utilities */
 @keyframes pulse-slow {

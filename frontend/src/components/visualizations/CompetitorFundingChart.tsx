@@ -95,6 +95,7 @@ export function CompetitorFundingChart({
             name="Total Funding"
             radius={[0, 4, 4, 0]}
             maxBarSize={35}
+            isAnimationActive={false}
           >
             {sortedData.map((entry, index) => {
               const isTarget = targetCompany && 
