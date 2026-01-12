@@ -40,46 +40,81 @@ async def generate_pdf(research_id: str, report: CompanyReport) -> bytes:
     logger.info(f"Generating PDF for report {research_id} from {print_url}")
     
     async with async_playwright() as p:
-        # Launch browser
-        browser = await p.chromium.launch(headless=True)
+        # Launch browser with specific args for better rendering
+        browser = await p.chromium.launch(
+            headless=True,
+            args=[
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--font-render-hinting=none',
+            ]
+        )
         
         try:
-            # Create new page
-            page = await browser.new_page()
+            # Create new page with specific settings
+            context = await browser.new_context(
+                viewport={"width": 1200, "height": 800},
+                device_scale_factor=2,  # Higher resolution for better quality
+            )
+            page = await context.new_page()
             
-            # Set viewport for consistent rendering
-            await page.set_viewport_size({"width": 1200, "height": 800})
+            # Enable console logging for debugging
+            page.on("console", lambda msg: logger.debug(f"Browser console: {msg.text}"))
             
-            # Navigate to print view
-            await page.goto(print_url, wait_until="networkidle")
+            # Navigate to print view with longer timeout
+            logger.info(f"Navigating to {print_url}")
+            await page.goto(print_url, wait_until="networkidle", timeout=60000)
             
-            # Wait for Recharts to render (they use SVG)
-            # Give extra time for charts to fully render
-            await page.wait_for_timeout(2000)
-            
-            # Wait for any loading indicators to disappear
+            # Wait for the report to load (loading class should disappear)
+            logger.info("Waiting for report to load...")
             try:
-                await page.wait_for_selector(".loading", state="hidden", timeout=5000)
+                await page.wait_for_selector(".loading", state="hidden", timeout=30000)
             except:
-                pass  # No loading indicator found, continue
+                pass  # No loading indicator or already hidden
             
-            # Generate PDF
+            # Wait for Recharts SVG elements to render
+            logger.info("Waiting for charts to render...")
+            try:
+                await page.wait_for_selector(".recharts-wrapper", timeout=10000)
+                # Give extra time for chart animations to complete
+                await page.wait_for_timeout(2000)
+            except:
+                logger.info("No Recharts found or timeout - continuing")
+            
+            # Additional wait for any lazy-loaded content
+            await page.wait_for_timeout(1000)
+            
+            # Inject print-specific CSS to ensure colors print correctly
+            await page.add_style_tag(content="""
+                * {
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+            """)
+            
+            # Generate PDF with professional settings
+            logger.info("Generating PDF...")
             pdf_bytes = await page.pdf(
                 format="A4",
-                print_background=True,  # Include background colors
+                print_background=True,
+                prefer_css_page_size=True,
                 margin={
-                    "top": "20mm",
-                    "bottom": "20mm",
-                    "left": "15mm",
-                    "right": "15mm",
+                    "top": "0",
+                    "bottom": "0",
+                    "left": "0",
+                    "right": "0",
                 },
-                display_header_footer=True,
-                header_template=_get_header_template(report.company_name),
-                footer_template=_get_footer_template(),
+                display_header_footer=False,  # We handle headers/footers in the page itself
             )
             
-            logger.info(f"PDF generated successfully for report {research_id}")
+            logger.info(f"PDF generated successfully for report {research_id} ({len(pdf_bytes)} bytes)")
             return pdf_bytes
+            
+        except Exception as e:
+            logger.error(f"PDF generation error: {str(e)}")
+            raise
             
         finally:
             await browser.close()
@@ -107,47 +142,42 @@ async def generate_pdf_from_html(html_content: str, report: CompanyReport) -> by
         )
     
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
+        browser = await p.chromium.launch(
+            headless=True,
+            args=['--no-sandbox', '--disable-setuid-sandbox']
+        )
         
         try:
-            page = await browser.new_page()
+            context = await browser.new_context(
+                viewport={"width": 1200, "height": 800},
+                device_scale_factor=2,
+            )
+            page = await context.new_page()
+            
             await page.set_content(html_content, wait_until="networkidle")
-            await page.wait_for_timeout(1000)
+            await page.wait_for_timeout(2000)
+            
+            # Inject print CSS
+            await page.add_style_tag(content="""
+                * {
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+            """)
             
             pdf_bytes = await page.pdf(
                 format="A4",
                 print_background=True,
+                prefer_css_page_size=True,
                 margin={
-                    "top": "20mm",
-                    "bottom": "20mm",
-                    "left": "15mm",
-                    "right": "15mm",
+                    "top": "0",
+                    "bottom": "0",
+                    "left": "0",
+                    "right": "0",
                 },
-                display_header_footer=True,
-                header_template=_get_header_template(report.company_name),
-                footer_template=_get_footer_template(),
             )
             
             return pdf_bytes
             
         finally:
             await browser.close()
-
-
-def _get_header_template(company_name: str) -> str:
-    """Generate PDF header template."""
-    return f"""
-    <div style="font-size: 10px; width: 100%; text-align: center; color: #666;">
-        <span>{company_name} - Due Diligence Report</span>
-    </div>
-    """
-
-
-def _get_footer_template() -> str:
-    """Generate PDF footer template with page numbers."""
-    return """
-    <div style="font-size: 10px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; color: #666;">
-        <span>Confidential</span>
-        <span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
-    </div>
-    """

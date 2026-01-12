@@ -1,82 +1,310 @@
 /* Print-specific styles for PDF export */
 
+/* Import the main styles for consistent colors */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* Base print styles */
+.print-report {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #0f172a;
+  line-height: 1.6;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+/* Page break utilities */
+.page-break-before {
+  page-break-before: always;
+}
+
+.page-break-after {
+  page-break-after: always;
+}
+
+.page-break-avoid {
+  page-break-inside: avoid;
+}
+
+/* Cover page styling */
+.cover-page {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+/* Section pages */
+.section-page {
+  min-height: 100vh;
+}
+
+.section-header {
+  page-break-after: avoid;
+}
+
+/* Chart containers */
+.chart-container {
+  page-break-inside: avoid;
+  max-height: 450px;
+  overflow: hidden;
+}
+
+/* Recharts specific - ensure SVG renders properly */
+.chart-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.recharts-wrapper {
+  max-width: 100% !important;
+}
+
+/* Prose styling for print */
+.prose-print {
+  font-size: 11pt;
+  line-height: 1.7;
+}
+
+.prose-print h1 {
+  font-size: 20pt;
+  font-weight: 700;
+  margin-top: 24pt;
+  margin-bottom: 12pt;
+  color: #0f172a;
+  page-break-after: avoid;
+}
+
+.prose-print h2 {
+  font-size: 16pt;
+  font-weight: 700;
+  margin-top: 20pt;
+  margin-bottom: 10pt;
+  color: #0f172a;
+  page-break-after: avoid;
+}
+
+.prose-print h3 {
+  font-size: 13pt;
+  font-weight: 600;
+  margin-top: 16pt;
+  margin-bottom: 8pt;
+  color: #1e293b;
+  page-break-after: avoid;
+}
+
+.prose-print h4 {
+  font-size: 11pt;
+  font-weight: 600;
+  margin-top: 12pt;
+  margin-bottom: 6pt;
+  color: #334155;
+  page-break-after: avoid;
+}
+
+.prose-print p {
+  margin-bottom: 10pt;
+  text-align: justify;
+  orphans: 3;
+  widows: 3;
+}
+
+.prose-print ul,
+.prose-print ol {
+  margin-bottom: 10pt;
+  padding-left: 20pt;
+}
+
+.prose-print li {
+  margin-bottom: 4pt;
+}
+
+.prose-print strong {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.prose-print em {
+  font-style: italic;
+}
+
+/* Tables in print */
+.prose-print table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16pt 0;
+  page-break-inside: avoid;
+  font-size: 10pt;
+}
+
+.prose-print th {
+  background-color: #f1f5f9 !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  padding: 8pt 12pt;
+  text-align: left;
+  font-weight: 600;
+  border: 1px solid #e2e8f0;
+}
+
+.prose-print td {
+  padding: 8pt 12pt;
+  border: 1px solid #e2e8f0;
+}
+
+/* Sources section */
+.sources-section {
+  page-break-inside: avoid;
+  font-size: 9pt;
+}
+
+/* Color classes for print */
+.bg-navy-900 { background-color: #0f172a !important; }
+.bg-navy-800 { background-color: #1e293b !important; }
+.bg-navy-100 { background-color: #f1f5f9 !important; }
+.bg-navy-50 { background-color: #f8fafc !important; }
+.bg-primary-500 { background-color: #f97316 !important; }
+.bg-primary-100 { background-color: #ffedd5 !important; }
+.bg-amber-50 { background-color: #fffbeb !important; }
+.bg-emerald-500 { background-color: #10b981 !important; }
+
+.text-navy-900 { color: #0f172a !important; }
+.text-navy-800 { color: #1e293b !important; }
+.text-navy-700 { color: #334155 !important; }
+.text-navy-600 { color: #475569 !important; }
+.text-navy-500 { color: #64748b !important; }
+.text-navy-400 { color: #94a3b8 !important; }
+.text-navy-300 { color: #cbd5e1 !important; }
+.text-navy-200 { color: #e2e8f0 !important; }
+.text-primary-600 { color: #ea580c !important; }
+.text-primary-500 { color: #f97316 !important; }
+.text-primary-400 { color: #fb923c !important; }
+.text-amber-600 { color: #d97706 !important; }
+.text-amber-700 { color: #b45309 !important; }
+.text-amber-800 { color: #92400e !important; }
+.text-emerald-500 { color: #10b981 !important; }
+.text-emerald-400 { color: #34d399 !important; }
+
+.border-navy-100 { border-color: #f1f5f9 !important; }
+.border-navy-200 { border-color: #e2e8f0 !important; }
+.border-navy-700 { border-color: #334155 !important; }
+.border-primary-500 { border-color: #f97316 !important; }
+.border-amber-200 { border-color: #fde68a !important; }
+
+/* Gradient backgrounds for print */
+.bg-gradient-to-br {
+  background: linear-gradient(to bottom right, var(--tw-gradient-stops)) !important;
+}
+
+.from-navy-900 { --tw-gradient-from: #0f172a; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent); }
+.via-navy-800 { --tw-gradient-stops: var(--tw-gradient-from), #1e293b, var(--tw-gradient-to, transparent); }
+.to-navy-900 { --tw-gradient-to: #0f172a; }
+
+.bg-gradient-to-r {
+  background: linear-gradient(to right, var(--tw-gradient-stops)) !important;
+}
+
+.from-primary-500 { --tw-gradient-from: #f97316; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent); }
+.to-primary-300 { --tw-gradient-to: #fdba74; }
+
+/* Print media query */
 @media print {
-  /* Hide non-printable elements */
-  .no-print,
-  .sidebar,
-  .export-buttons,
-  button,
-  nav {
+  /* Force color printing */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Page setup */
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  @page :first {
+    margin: 0;
+  }
+
+  /* Hide loading states */
+  .loading {
     display: none !important;
   }
 
-  /* Reset page margins */
-  @page {
-    margin: 1in;
-    size: letter;
+  /* Body reset */
+  body {
+    margin: 0;
+    padding: 0;
+    background: white !important;
   }
 
-  /* Ensure content fills page */
-  body {
-    background: white !important;
-    color: black !important;
-    font-size: 11pt;
-    line-height: 1.5;
+  /* Ensure backgrounds print */
+  .cover-page,
+  .bg-navy-900,
+  .bg-navy-800,
+  .bg-navy-100,
+  .bg-navy-50,
+  .bg-primary-500,
+  .bg-primary-100,
+  .bg-amber-50 {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   /* Page breaks */
-  .section {
-    page-break-inside: avoid;
-    page-break-after: auto;
+  .cover-page {
+    page-break-after: always;
   }
 
-  h1, h2, h3 {
+  .toc-page {
+    page-break-after: always;
+  }
+
+  .section-page {
+    page-break-before: always;
+  }
+
+  .back-cover {
+    page-break-before: always;
+  }
+
+  /* Prevent orphans and widows */
+  p, li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Keep headings with content */
+  h1, h2, h3, h4, h5, h6 {
     page-break-after: avoid;
+    page-break-inside: avoid;
   }
 
-  /* Charts should not break */
+  /* Keep charts together */
   .chart-container {
     page-break-inside: avoid;
-    max-height: 400px;
   }
 
-  /* Tables */
-  table {
+  /* Keep sources together */
+  .sources-section {
     page-break-inside: avoid;
   }
 
-  thead {
-    display: table-header-group;
-  }
-
-  /* Links show URL */
+  /* Links - don't show URL in print since we have sources section */
   a[href]:after {
-    content: " (" attr(href) ")";
-    font-size: 9pt;
-    color: #666;
+    content: none;
+  }
+}
+
+/* Screen-only styles for preview */
+@media screen {
+  .print-report {
+    max-width: 210mm; /* A4 width */
+    margin: 0 auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   }
 
-  /* Source citations */
-  .source-citation {
-    font-size: 9pt;
-    color: #666;
-  }
-
-  /* Header for each page */
-  .print-header {
-    position: running(header);
-    font-size: 10pt;
-    color: #666;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 8px;
-    margin-bottom: 16px;
-  }
-
-  /* Footer for each page */
-  .print-footer {
-    position: running(footer);
-    font-size: 9pt;
-    color: #999;
-    text-align: center;
+  .cover-page,
+  .toc-page,
+  .section-page,
+  .back-cover {
+    min-height: 297mm; /* A4 height */
   }
 }

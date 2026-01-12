@@ -56,14 +56,42 @@ When you have gathered sufficient data, provide your findings in this format:
 
 {source_priority}
 
+## ⛔ ANTI-HALLUCINATION RULES (CRITICAL - MUST FOLLOW)
+
+1. **NEVER FABRICATE DATA**: Do NOT invent names, numbers, percentages, or any other data
+2. **NEVER USE PLACEHOLDER DATA**: Do NOT use generic examples like "Sarah Chen", "David Rodriguez", "sec.gov/filing/12345", "companywebsite.com"
+3. **ONLY REPORT VERIFIED DATA**: Every single fact MUST come from an actual search result
+4. **REAL URLS ONLY**: Only include URLs that appeared in your search results - NEVER make up URLs
+5. **ADMIT GAPS**: If you cannot find specific information, clearly state "Data not found" - do NOT fill in with made-up data
+6. **VERIFY COMPANY NAME**: Before including ANY data point, verify it explicitly mentions "{company_name}"
+
+## WHAT TO DO WHEN DATA IS NOT FOUND
+
+If you cannot find specific information after searching:
+- DO NOT make up data to fill the gap
+- DO NOT use generic placeholder names or numbers
+- DO state clearly: "Information not available from public sources"
+- DO list it as a data gap
+- DO move on to the next data point
+
+Example of WRONG behavior:
+❌ "The CEO is John Smith" (when you didn't find this in search results)
+❌ "Source: https://www.companywebsite.com/about" (made-up URL)
+❌ "Founders hold 40%" (when you didn't find actual percentage)
+
+Example of CORRECT behavior:
+✅ "CEO information not found in public sources" 
+✅ "Ownership breakdown data not available"
+✅ List actual URLs from search results only
+
 ## RULES
 
 - ⚠️ ONLY include information about "{company_name}" - no other companies
 - Include ALL factual data points found about {company_name}
-- Include source URLs for EVERY claim
+- Include source URLs for EVERY claim - ONLY real URLs from search results
 - Mark uncertain information as "unverified"
 - List any data gaps that couldn't be filled
-- Do NOT fabricate or infer data not found in sources
+- ⛔ ABSOLUTELY DO NOT fabricate or infer data not found in sources
 - Be thorough but efficient - don't repeat searches unnecessarily
 - If you find information about a different company with a similar name, DISCARD it
 """
@@ -215,7 +243,10 @@ Extract company background information:
 """,
     
     SectionId.LEADERSHIP_GOVERNANCE: """
-Extract leadership, governance, and ownership data:
+Extract leadership, governance, and ownership data for the TARGET COMPANY ONLY.
+
+⚠️ IMPORTANT: Only include information that you actually find in search results.
+If you cannot find specific data, list it as a data gap - do NOT make up names or numbers.
 
 **PRIORITY DATA FOR VISUALIZATIONS (MUST FIND):**
 
@@ -227,6 +258,7 @@ CAP TABLE / OWNERSHIP STRUCTURE:
   * ESOP/Employees: X%
   * Others: X%
 - Individual major shareholders with % holdings if available
+- NOTE: If percentages are not found, state "Ownership data not available"
 
 FUNDING HISTORY (for timeline chart):
 - Each funding round with:
@@ -235,23 +267,31 @@ FUNDING HISTORY (for timeline chart):
   * Amount raised (in USD millions)
   * Post-money valuation (in USD millions)
   * Lead investors
+- NOTE: For public companies, this may be IPO history instead
 
 LEADERSHIP TEAM:
 - Key executives: name, title, tenure, background
 - Previous companies and education
 - Founder status
+- NOTE: Only include names you actually find - do NOT invent names
 
 BOARD & GOVERNANCE:
 - Board members: name, role, independence status
 - Board committees
 - Governance structure
+- NOTE: Only include names you actually find - do NOT invent names
 
 REQUIRED SEARCH QUERIES (use these exact queries with company name):
-- "[COMPANY] shareholding pattern percentage"
-- "[COMPANY] ownership structure promoters institutional"
-- "[COMPANY] cap table investors"
-- "[COMPANY] funding rounds history valuation"
-- "[COMPANY] board of directors management team"
+- "[COMPANY] chairman CEO managing director"
+- "[COMPANY] board of directors members"
+- "[COMPANY] shareholding pattern promoters"
+- "[COMPANY] ownership structure institutional investors"
+- "[COMPANY] annual report leadership team"
+
+For INDIAN companies specifically:
+- "[COMPANY] BSE shareholding pattern"
+- "[COMPANY] promoter holding percentage"
+- "[COMPANY] board of directors NSE"
 """,
     
     SectionId.BUSINESS_MODEL: """
