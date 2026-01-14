@@ -186,7 +186,6 @@ def _categorize_owner(name: str) -> str:
 def _generate_ownership_chart(data: dict) -> dict:
     """Generate ownership pie chart data matching frontend OwnershipPieChart expectations."""
     ownership_data = data.get("ownership_data", [])
-    funding_rounds = data.get("funding_rounds", [])
     
     result = {}
     
@@ -207,23 +206,6 @@ def _generate_ownership_chart(data: dict) -> dict:
         if chart_data:
             result["ownership"] = chart_data
     
-    # Generate funding history for FundingLineChart
-    # Frontend expects: { date: string, amount: number, round: string, valuation?: number }
-    if funding_rounds and len(funding_rounds) > 0:
-        funding_data = []
-        for round_info in funding_rounds:
-            if isinstance(round_info, dict):
-                amount = round_info.get("amount_raised", 0)
-                if amount and amount > 0:  # Only include rounds with funding amounts
-                    funding_data.append({
-                        "date": round_info.get("date", ""),
-                        "amount": amount,
-                        "round": round_info.get("round_name", "Unknown"),
-                        "valuation": round_info.get("post_money_valuation"),
-                    })
-        if funding_data:
-            result["funding_history"] = funding_data
-    
     return result
 
 
@@ -233,6 +215,10 @@ def _generate_revenue_chart(data: dict) -> dict:
     
     if not revenue_streams or len(revenue_streams) == 0:
         return {}
+    
+    # Get currency and unit info
+    currency = data.get("currency", "USD")
+    unit = data.get("unit", "millions")
     
     # Frontend expects: { segment: string, revenue: number, percentage?: number }
     chart_data = []
@@ -252,11 +238,13 @@ def _generate_revenue_chart(data: dict) -> dict:
     
     return {
         "revenue_breakdown": chart_data,
+        "currency": currency,
+        "unit": unit,
     }
 
 
 def _generate_competitor_chart(data: dict) -> dict:
-    """Generate competitor funding comparison chart data matching frontend expectations."""
+    """Generate market share chart data matching frontend expectations."""
     competitors = data.get("competitors", [])
     
     if not competitors or len(competitors) == 0:
@@ -265,57 +253,26 @@ def _generate_competitor_chart(data: dict) -> dict:
     result = {}
     target_company = None
     
-    # Filter and sort by funding (descending)
-    valid_competitors = []
-    for item in competitors:
-        if isinstance(item, dict):
-            company_name = item.get("company", "Unknown")
-            funding = item.get("funding", 0) or 0
-            valid_competitors.append({
-                "company": company_name,
-                "funding": funding,
-                "market_share": item.get("market_share"),
-                "is_target": item.get("is_target", False),
-            })
-    
-    if not valid_competitors:
-        return {}
-    
-    sorted_competitors = sorted(
-        valid_competitors,
-        key=lambda x: x.get("funding", 0) or 0,
-        reverse=True
-    )
-    
-    # Frontend CompetitorFundingChart expects: { name: string, funding: number }
-    funding_data = []
     # Frontend MarketSharePieChart expects: { company: string, share: number, isTarget?: boolean }
     market_share_data = []
     
-    for item in sorted_competitors:
-        company_name = item.get("company", "Unknown")
-        is_target = item.get("is_target", False)
-        
-        # Track target company
-        if is_target:
-            target_company = company_name
-        
-        funding_data.append({
-            "name": company_name,
-            "funding": item.get("funding", 0),
-        })
-        
-        # Build market share data if available
-        market_share = item.get("market_share")
-        if market_share is not None and market_share > 0:
-            market_share_data.append({
-                "company": company_name,
-                "share": market_share,
-                "isTarget": is_target,
-            })
-    
-    if funding_data:
-        result["competitor_funding"] = funding_data
+    for item in competitors:
+        if isinstance(item, dict):
+            company_name = item.get("company", "Unknown")
+            is_target = item.get("is_target", False)
+            
+            # Track target company
+            if is_target:
+                target_company = company_name
+            
+            # Build market share data if available
+            market_share = item.get("market_share")
+            if market_share is not None and market_share > 0:
+                market_share_data.append({
+                    "company": company_name,
+                    "share": market_share,
+                    "isTarget": is_target,
+                })
     
     if target_company:
         result["target_company"] = target_company
@@ -332,6 +289,10 @@ def _generate_financials_chart(data: dict) -> dict:
     
     if not annual_data or len(annual_data) == 0:
         return {}
+    
+    # Get currency and unit info
+    currency = data.get("currency", "USD")
+    unit = data.get("unit", "millions")
     
     # Frontend expects: { period: string, revenue: number, ebitda?: number, profit?: number, 
     #                     grossMargin?: number, ebitdaMargin?: number, profitMargin?: number }
@@ -387,4 +348,6 @@ def _generate_financials_chart(data: dict) -> dict:
     
     return {
         "financial_metrics": chart_data,
+        "currency": currency,
+        "unit": unit,
     }

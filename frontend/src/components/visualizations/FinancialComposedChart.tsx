@@ -13,14 +13,16 @@ import {
   ReferenceLine,
 } from 'recharts';
 import { FinancialDataPoint } from '@/types/visualizations';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, getCurrencyLabel } from '@/lib/utils';
 
 interface FinancialComposedChartProps {
   data: FinancialDataPoint[];
   title?: string;
+  currency?: string;
+  unit?: string;
 }
 
-export function FinancialComposedChart({ data, title }: FinancialComposedChartProps) {
+export function FinancialComposedChart({ data, title, currency = 'USD', unit = 'millions' }: FinancialComposedChartProps) {
   if (!data || data.length === 0) return null;
 
   const hasProfit = data.some((d) => d.profit !== undefined && d.profit !== null);
@@ -28,6 +30,8 @@ export function FinancialComposedChart({ data, title }: FinancialComposedChartPr
   const hasMargin = data.some((d) => d.margin !== undefined && d.margin !== null);
   const hasEbitdaMargin = data.some((d) => (d as any).ebitdaMargin !== undefined);
   const hasProfitMargin = data.some((d) => (d as any).profitMargin !== undefined);
+
+  const currencyLabel = getCurrencyLabel(currency, unit);
 
   return (
     <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
@@ -75,11 +79,11 @@ export function FinancialComposedChart({ data, title }: FinancialComposedChartPr
           />
           <YAxis
             yAxisId="left"
-            tickFormatter={(value) => formatCurrency(value)}
+            tickFormatter={(value) => formatCurrency(value, currency, unit)}
             tick={{ fill: '#6b7280', fontSize: 12 }}
             axisLine={{ stroke: '#d1d5db' }}
             label={{ 
-              value: 'Amount (USD)', 
+              value: `Amount (${currencyLabel})`, 
               angle: -90, 
               position: 'insideLeft',
               style: { textAnchor: 'middle', fill: '#6b7280', fontSize: 12 }
@@ -113,7 +117,7 @@ export function FinancialComposedChart({ data, title }: FinancialComposedChartPr
               if (name.includes('Margin') || name.includes('margin')) {
                 return [`${value?.toFixed(1)}%`, name];
               }
-              return [formatCurrency(value), name];
+              return [formatCurrency(value, currency, unit), name];
             }}
             labelStyle={{ fontWeight: 'bold', color: '#374151' }}
           />

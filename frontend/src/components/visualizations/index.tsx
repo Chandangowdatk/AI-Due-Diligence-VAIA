@@ -2,21 +2,15 @@
 
 import { SectionId } from '@/types';
 import { OwnershipPieChart } from './OwnershipPieChart';
-import { FundingLineChart } from './FundingLineChart';
-import { FundingTimeline } from './FundingTimeline';
 import { CapTable } from './CapTable';
 import { RevenueBarChart } from './RevenueBarChart';
-import { CompetitorFundingChart } from './CompetitorFundingChart';
 import { MarketSharePieChart } from './MarketSharePieChart';
 import { FinancialComposedChart } from './FinancialComposedChart';
 import { FinancialTable } from './FinancialTable';
 
 export { OwnershipPieChart } from './OwnershipPieChart';
-export { FundingLineChart } from './FundingLineChart';
-export { FundingTimeline } from './FundingTimeline';
 export { CapTable } from './CapTable';
 export { RevenueBarChart } from './RevenueBarChart';
-export { CompetitorFundingChart } from './CompetitorFundingChart';
 export { MarketSharePieChart } from './MarketSharePieChart';
 export { FinancialComposedChart } from './FinancialComposedChart';
 export { FinancialTable } from './FinancialTable';
@@ -51,7 +45,6 @@ export function VisualizationRenderer({ sectionId, data }: VisualizationRenderer
   switch (sectionId) {
     case 'leadership_governance':
       const hasOwnership = hasValidData(data.ownership as any[], 2);
-      const hasFunding = hasValidData(data.funding_history as any[], 1);
       
       return (
         <div className="space-y-6">
@@ -64,20 +57,13 @@ export function VisualizationRenderer({ sectionId, data }: VisualizationRenderer
           ) : (
             <DataUnavailableNote dataType="Detailed ownership structure" />
           )}
-          {/* Funding Timeline */}
-          {hasFunding ? (
-            <FundingTimeline
-              data={data.funding_history as any}
-              title="Funding History & Valuation"
-            />
-          ) : (
-            <DataUnavailableNote dataType="Funding history" />
-          )}
         </div>
       );
 
     case 'business_model':
       const hasRevenue = hasValidData(data.revenue_breakdown as any[], 2);
+      const revenueCurrency = (data.currency as string) || 'USD';
+      const revenueUnit = (data.unit as string) || 'millions';
       
       if (!hasRevenue) {
         return <DataUnavailableNote dataType="Revenue segment breakdown" />;
@@ -88,25 +74,17 @@ export function VisualizationRenderer({ sectionId, data }: VisualizationRenderer
           <RevenueBarChart
             data={data.revenue_breakdown as any}
             title="Revenue Breakdown by Segment"
+            currency={revenueCurrency}
+            unit={revenueUnit}
           />
         </div>
       );
 
     case 'competitive_landscape':
-      const hasCompetitorFunding = hasValidData(data.competitor_funding as any[], 2);
       const hasMarketShare = hasValidData(data.market_share as any[], 2);
       
       return (
         <div className="space-y-6">
-          {hasCompetitorFunding ? (
-            <CompetitorFundingChart
-              data={data.competitor_funding as any}
-              title="Top Competitors by Funding"
-              targetCompany={data.target_company as string}
-            />
-          ) : (
-            <DataUnavailableNote dataType="Competitor funding comparison" />
-          )}
           {hasMarketShare ? (
             <MarketSharePieChart
               data={data.market_share as any}
@@ -120,6 +98,8 @@ export function VisualizationRenderer({ sectionId, data }: VisualizationRenderer
 
     case 'financials':
       const hasFinancials = hasValidData(data.financial_metrics as any[], 2);
+      const financialCurrency = (data.currency as string) || 'USD';
+      const financialUnit = (data.unit as string) || 'millions';
       
       if (!hasFinancials) {
         return <DataUnavailableNote dataType="Historical financial metrics" />;
@@ -131,11 +111,15 @@ export function VisualizationRenderer({ sectionId, data }: VisualizationRenderer
           <FinancialComposedChart
             data={data.financial_metrics as any}
             title="Financial Summary Over Time"
+            currency={financialCurrency}
+            unit={financialUnit}
           />
           {/* Financial Table */}
           <FinancialTable
             data={data.financial_metrics as any}
             title="Financial Metrics by Year"
+            currency={financialCurrency}
+            unit={financialUnit}
           />
         </div>
       );

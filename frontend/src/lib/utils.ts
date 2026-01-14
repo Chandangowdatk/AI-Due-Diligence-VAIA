@@ -39,28 +39,93 @@ export function formatNumber(num: number): string {
   return num.toLocaleString();
 }
 
-// Format currency (values are in millions)
-export function formatCurrency(amount: number | undefined | null, currency = 'USD'): string {
+// Format currency with support for different currencies and units
+export function formatCurrency(
+  amount: number | undefined | null, 
+  currency = 'USD',
+  unit = 'millions'
+): string {
   if (amount === undefined || amount === null) return '-';
   
-  // Values are already in millions, so we need to display them appropriately
   const absAmount = Math.abs(amount);
   const sign = amount < 0 ? '-' : '';
   
-  if (absAmount >= 1000) {
-    // Billions (1000M = 1B)
-    return `${sign}$${(absAmount / 1000).toFixed(1)}B`;
-  } else if (absAmount >= 1) {
-    // Millions
-    return `${sign}$${absAmount.toFixed(1)}M`;
-  } else if (absAmount >= 0.001) {
-    // Thousands (0.001M = 1K)
-    return `${sign}$${(absAmount * 1000).toFixed(0)}K`;
-  } else if (absAmount === 0) {
-    return '$0';
+  // Currency symbols
+  const currencySymbols: Record<string, string> = {
+    'USD': '$',
+    'INR': '₹',
+    'EUR': '€',
+    'GBP': '£',
+    'JPY': '¥',
+    'CNY': '¥',
+  };
+  
+  const symbol = currencySymbols[currency] || currency + ' ';
+  
+  // Handle different units
+  if (unit === 'crores') {
+    // Indian crores - display as Cr
+    if (absAmount >= 100) {
+      return `${sign}${symbol}${absAmount.toLocaleString()} Cr`;
+    } else {
+      return `${sign}${symbol}${absAmount.toFixed(1)} Cr`;
+    }
+  } else if (unit === 'lakhs') {
+    // Indian lakhs - display as L
+    if (absAmount >= 100) {
+      return `${sign}${symbol}${absAmount.toLocaleString()} L`;
+    } else {
+      return `${sign}${symbol}${absAmount.toFixed(1)} L`;
+    }
+  } else if (unit === 'billions') {
+    // Already in billions
+    return `${sign}${symbol}${absAmount.toFixed(1)}B`;
+  } else if (unit === 'thousands') {
+    // Already in thousands
+    if (absAmount >= 1000) {
+      return `${sign}${symbol}${(absAmount / 1000).toFixed(1)}M`;
+    }
+    return `${sign}${symbol}${absAmount.toFixed(0)}K`;
   } else {
-    return `${sign}$${absAmount.toFixed(2)}M`;
+    // Default: millions
+    if (absAmount >= 1000) {
+      // Billions (1000M = 1B)
+      return `${sign}${symbol}${(absAmount / 1000).toFixed(1)}B`;
+    } else if (absAmount >= 1) {
+      // Millions
+      return `${sign}${symbol}${absAmount.toFixed(1)}M`;
+    } else if (absAmount >= 0.001) {
+      // Thousands (0.001M = 1K)
+      return `${sign}${symbol}${(absAmount * 1000).toFixed(0)}K`;
+    } else if (absAmount === 0) {
+      return `${symbol}0`;
+    } else {
+      return `${sign}${symbol}${absAmount.toFixed(2)}M`;
+    }
   }
+}
+
+// Format currency label for chart axes
+export function getCurrencyLabel(currency = 'USD', unit = 'millions'): string {
+  const currencyNames: Record<string, string> = {
+    'USD': 'USD',
+    'INR': 'INR',
+    'EUR': 'EUR',
+    'GBP': 'GBP',
+  };
+  
+  const unitNames: Record<string, string> = {
+    'millions': 'M',
+    'billions': 'B',
+    'crores': 'Cr',
+    'lakhs': 'L',
+    'thousands': 'K',
+  };
+  
+  const currencyName = currencyNames[currency] || currency;
+  const unitName = unitNames[unit] || unit;
+  
+  return `${currencyName} ${unitName}`;
 }
 
 // Get status color class

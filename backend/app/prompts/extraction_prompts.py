@@ -11,9 +11,34 @@ EXTRACTION_SYSTEM_PROMPT = """You are a data extraction specialist. Your job is 
 3. Preserve numerical precision as stated in source
 4. Return valid JSON matching the requested schema
 5. If percentages are mentioned without exact numbers, estimate based on context
-6. Convert all monetary values to millions (e.g., $1.5B = 1500, $500M = 500, $10M = 10)
-7. If you find partial data, include what you can find - partial data is better than no data
-8. Look for data in various formats: tables, lists, prose, etc.
+6. If you find partial data, include what you can find - partial data is better than no data
+7. Look for data in various formats: tables, lists, prose, etc.
+
+## CURRENCY HANDLING (CRITICAL)
+
+PRESERVE THE ORIGINAL CURRENCY AND UNITS from the source data:
+- If data is in Indian Rupees (₹, INR, Rs), keep it in INR
+- If data is in US Dollars ($, USD), keep it in USD
+- If data is in Crores (Cr), keep the crore unit (1 Crore = 10 Million)
+- If data is in Lakhs (L), keep the lakh unit (1 Lakh = 100,000)
+- If data is in Billions (B), convert to the appropriate unit for that currency
+- If data is in Millions (M), keep as millions
+
+CONVERSION REFERENCE (DO NOT CONVERT - just for understanding):
+- 1 Crore INR = 10 Million INR = ~$120,000 USD (varies with exchange rate)
+- 1 Lakh INR = 100,000 INR
+- 1 Billion = 1000 Million
+
+ALWAYS include the "currency" and "unit" fields to specify what the numbers represent:
+- currency: "INR", "USD", "EUR", "GBP", etc.
+- unit: "crores", "lakhs", "millions", "billions", "thousands"
+
+Example: If source says "Revenue: ₹9,738 Crores"
+- revenue: 9738
+- currency: "INR"
+- unit: "crores"
+
+DO NOT convert 9,738 crores to billions or any other unit - keep it as 9738 with unit "crores"
 
 ## HANDLING MISSING DATA
 
@@ -30,11 +55,9 @@ Return ONLY valid JSON. No explanations, no markdown code blocks, just the JSON 
 
 # Section-specific extraction prompts
 EXTRACTION_PROMPTS = {
-    SectionId.LEADERSHIP_GOVERNANCE: """Extract ownership/shareholding and funding data for visualizations.
+    SectionId.LEADERSHIP_GOVERNANCE: """Extract ownership/shareholding data for visualizations.
 
-From the text, extract:
-1. Shareholder categories and their ownership percentages (Founders/Promoters, Institutional Investors, Public/Retail, ESOP, etc.)
-2. Funding rounds with dates, amounts, and valuations
+From the text, extract shareholder categories and their ownership percentages (Founders/Promoters, Institutional Investors, Public/Retail, ESOP, etc.)
 
 Return JSON in this format:
 {
@@ -43,21 +66,10 @@ Return JSON in this format:
         {"name": "Institutional Investors", "value": 30.0},
         {"name": "Public/Retail", "value": 20.0},
         {"name": "ESOP", "value": 4.5}
-    ],
-    "funding_rounds": [
-        {
-            "round_name": "Series A",
-            "date": "2020-03",
-            "amount_raised": 10.0,
-            "post_money_valuation": 50.0
-        }
-    ],
-    "total_funding": 150.0,
-    "latest_valuation": 500.0
+    ]
 }
 
 IMPORTANT:
-- All monetary values should be in MILLIONS (e.g., $1.5B = 1500, $500M = 500)
 - Ownership percentages should sum to approximately 100
 - If exact percentages aren't given, estimate based on context (e.g., "majority stake" = ~51%)
 - Include any ownership data you can find, even if incomplete
@@ -81,42 +93,38 @@ Return JSON in this format:
 }
 
 IMPORTANT:
-- All revenue values should be in MILLIONS
+- PRESERVE the original currency and units from the source data
+- If data is in INR Crores, use currency: "INR", unit: "crores" 
+- If data is in USD Millions, use currency: "USD", unit: "millions"
 - If only percentages are given, estimate revenue based on total if available
 - If only revenue is given, calculate percentages
 - Include any revenue breakdown you can find (by product, geography, customer segment, etc.)
 """,
 
-    SectionId.COMPETITIVE_LANDSCAPE: """Extract competitor data for visualization.
+    SectionId.COMPETITIVE_LANDSCAPE: """Extract market share data for visualization.
 
-From the text, extract competitor information including funding and market share.
+From the text, extract competitor market share information.
 
 Return JSON in this format:
 {
     "competitors": [
         {
             "company": "Competitor A",
-            "funding": 200.0,
             "market_share": 25.0,
             "is_target": false
         },
         {
             "company": "Target Company",
-            "funding": 150.0,
             "market_share": 15.0,
             "is_target": true
         }
-    ],
-    "currency": "USD",
-    "unit": "millions"
+    ]
 }
 
 IMPORTANT:
 - Mark the target company (the one being researched) with "is_target": true
-- All funding values should be in MILLIONS
 - Market share should be a percentage (0-100)
 - Include the target company in the competitors list for comparison
-- If funding isn't available, use 0 or null
 """,
 
     SectionId.FINANCIALS: """Extract financial data for a composed chart showing revenue, profit, and margins over time.
@@ -152,7 +160,10 @@ Return JSON in this format:
 }
 
 IMPORTANT:
-- All monetary values (revenue, gross_profit, ebitda, net_profit) should be in MILLIONS
+- PRESERVE the original currency and units from the source data
+- If data is in INR Crores, use currency: "INR", unit: "crores"
+- If data is in USD Millions, use currency: "USD", unit: "millions"
+- DO NOT convert between currencies or units - keep the original values
 - Margins should be percentages (0-100)
 - Include as many years as available in the data (at least 3-5 years if possible)
 - If some metrics are missing for a year, include what's available

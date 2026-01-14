@@ -14,16 +14,18 @@ import {
   Pie,
 } from 'recharts';
 import { RevenueDataPoint } from '@/types/visualizations';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, getCurrencyLabel } from '@/lib/utils';
 
 interface RevenueBarChartProps {
   data: RevenueDataPoint[];
   title?: string;
+  currency?: string;
+  unit?: string;
 }
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
 
-export function RevenueBarChart({ data, title }: RevenueBarChartProps) {
+export function RevenueBarChart({ data, title, currency = 'USD', unit = 'millions' }: RevenueBarChartProps) {
   if (!data || data.length === 0) return null;
 
   // Sort by revenue descending
@@ -31,6 +33,7 @@ export function RevenueBarChart({ data, title }: RevenueBarChartProps) {
   
   // Calculate total
   const totalRevenue = sortedData.reduce((sum, item) => sum + (item.revenue || 0), 0);
+  const currencyLabel = getCurrencyLabel(currency, unit);
 
   // Add percentage if not present
   const dataWithPercentage = sortedData.map(item => ({
@@ -44,8 +47,8 @@ export function RevenueBarChart({ data, title }: RevenueBarChartProps) {
       
       {/* Summary */}
       <div className="mb-6 p-3 bg-blue-50 rounded-lg">
-        <div className="text-sm text-blue-600 font-medium">Total Revenue</div>
-        <div className="text-2xl font-bold text-blue-900">{formatCurrency(totalRevenue)}</div>
+        <div className="text-sm text-blue-600 font-medium">Total Revenue ({currencyLabel})</div>
+        <div className="text-2xl font-bold text-blue-900">{formatCurrency(totalRevenue, currency, unit)}</div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -60,7 +63,7 @@ export function RevenueBarChart({ data, title }: RevenueBarChartProps) {
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" horizontal={true} vertical={false} />
               <XAxis
                 type="number"
-                tickFormatter={(value) => formatCurrency(value)}
+                tickFormatter={(value) => formatCurrency(value, currency, unit)}
                 tick={{ fill: '#6b7280', fontSize: 11 }}
                 axisLine={{ stroke: '#d1d5db' }}
               />
@@ -74,7 +77,7 @@ export function RevenueBarChart({ data, title }: RevenueBarChartProps) {
               <Tooltip
                 formatter={(value: number, name: string) => {
                   if (name === 'percentage') return [`${value.toFixed(1)}%`, 'Share'];
-                  return [formatCurrency(value), 'Revenue'];
+                  return [formatCurrency(value, currency, unit), 'Revenue'];
                 }}
                 contentStyle={{
                   backgroundColor: 'white',
@@ -90,7 +93,7 @@ export function RevenueBarChart({ data, title }: RevenueBarChartProps) {
                 <LabelList
                   dataKey="revenue"
                   position="right"
-                  formatter={(value: number) => formatCurrency(value)}
+                  formatter={(value: number) => formatCurrency(value, currency, unit)}
                   style={{ fill: '#374151', fontSize: 11, fontWeight: 500 }}
                 />
               </Bar>

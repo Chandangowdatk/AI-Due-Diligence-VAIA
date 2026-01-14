@@ -95,6 +95,7 @@ async def research_section(
 2. EVERY search query MUST start with "{company_name}"
 3. If you find information about a different company, IGNORE it completely
 4. Only report facts that are specifically about "{company_name}"
+5. VERIFY every data point mentions "{company_name}" before including it
 
 START YOUR RESEARCH with these exact searches:
 1. Use tavily_search with query: "{company_name} {section_name.lower()} overview"
@@ -102,6 +103,13 @@ START YOUR RESEARCH with these exact searches:
 
 Then use the think tool to analyze what you found and identify gaps.
 Continue searching until you have comprehensive coverage or reach {max_iterations} iterations.
+
+⛔ VALIDATION CHECKLIST (before including ANY data):
+- Does this data explicitly mention "{company_name}"?
+- Is this data from a credible source about "{company_name}"?
+- Am I 100% certain this is not about a different company?
+
+If you cannot verify the data is about "{company_name}", DO NOT include it.
 
 REMEMBER: 
 - Target company: {company_name}

@@ -261,15 +261,6 @@ CAP TABLE / OWNERSHIP STRUCTURE:
 - Individual major shareholders with % holdings if available
 - NOTE: If percentages are not found, state "Ownership data not available"
 
-FUNDING HISTORY (for timeline chart):
-- Each funding round with:
-  * Round name (Seed, Series A, B, C, etc.)
-  * Date (month/year)
-  * Amount raised (in USD millions)
-  * Post-money valuation (in USD millions)
-  * Lead investors
-- NOTE: For public companies, this may be IPO history instead
-
 LEADERSHIP TEAM:
 - Key executives: name, title, tenure, background
 - Previous companies and education
@@ -363,14 +354,6 @@ Extract competitive landscape data:
 
 **PRIORITY DATA FOR VISUALIZATIONS (MUST FIND):**
 
-COMPETITOR FUNDING COMPARISON (for bar chart):
-- List of competitors with:
-  * Company name
-  * Total funding raised (in USD millions)
-  * Market share % (if available)
-- Include the target company in the comparison
-- At least 5-8 competitors
-
 MARKET SHARE (for pie chart):
 - Market share percentages for:
   * Target company
@@ -378,7 +361,7 @@ MARKET SHARE (for pie chart):
   * "Others" category
 
 COMPETITORS:
-- Direct competitors: name, funding, revenue estimate, market share
+- Direct competitors: name, revenue estimate, market share
 - Indirect competitors and substitutes
 - Key strengths and weaknesses of each
 

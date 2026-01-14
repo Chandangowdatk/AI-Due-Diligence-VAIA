@@ -1,6 +1,6 @@
 'use client';
 
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, getCurrencyLabel } from '@/lib/utils';
 
 interface FinancialTableData {
   period: string;
@@ -16,9 +16,11 @@ interface FinancialTableData {
 interface FinancialTableProps {
   data: FinancialTableData[];
   title?: string;
+  currency?: string;
+  unit?: string;
 }
 
-export function FinancialTable({ data, title }: FinancialTableProps) {
+export function FinancialTable({ data, title, currency = 'USD', unit = 'millions' }: FinancialTableProps) {
   if (!data || data.length === 0) return null;
 
   // Determine which columns to show based on available data
@@ -29,6 +31,8 @@ export function FinancialTable({ data, title }: FinancialTableProps) {
   const hasProfit = data.some(d => d.profit !== undefined);
   const hasProfitMargin = data.some(d => d.profitMargin !== undefined);
 
+  const currencyLabel = getCurrencyLabel(currency, unit);
+
   const formatMargin = (value?: number) => {
     if (value === undefined || value === null) return '-';
     return `${value.toFixed(1)}%`;
@@ -36,7 +40,7 @@ export function FinancialTable({ data, title }: FinancialTableProps) {
 
   const formatValue = (value?: number) => {
     if (value === undefined || value === null) return '-';
-    return formatCurrency(value);
+    return formatCurrency(value, currency, unit);
   };
 
   // Get cell color based on value (positive = green, negative = red)
@@ -166,7 +170,7 @@ export function FinancialTable({ data, title }: FinancialTableProps) {
       </div>
       
       <div className="mt-3 text-xs text-gray-500">
-        * All monetary values in millions USD
+        * All monetary values in {currencyLabel}
       </div>
     </div>
   );
