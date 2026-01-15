@@ -18,6 +18,7 @@ async def extract_structured_data(
     raw_data: str,
     section_id: SectionId,
     company_name: str = None,
+    region: str = None,
 ) -> Optional[dict[str, Any]]:
     """
     Extract structured data from raw research text for visualizations.
@@ -26,19 +27,20 @@ async def extract_structured_data(
         raw_data: Raw research data from Research Agent
         section_id: Which section to extract data for
         company_name: Name of the company being researched
+        region: Company's region (INDIA, USA, UK, etc.) for currency handling
         
     Returns:
         Structured data dict for visualization, or None if not applicable
     """
     # Get extraction prompt for this section
-    extraction_prompt = get_extraction_prompt(section_id, raw_data, company_name)
+    extraction_prompt = get_extraction_prompt(section_id, raw_data, company_name, region)
     
     if not extraction_prompt:
         # No visualization for this section
         logger.debug(f"No extraction needed for section: {section_id.value}")
         return None
     
-    logger.info(f"Extracting structured data for section: {section_id.value}")
+    logger.info(f"Extracting structured data for section: {section_id.value} (region={region})")
     logger.debug(f"Raw data length: {len(raw_data)} chars")
     
     settings = get_settings()

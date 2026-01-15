@@ -34,6 +34,10 @@ def get_tavily_client() -> TavilyClient:
     return TavilyClient(api_key=settings.tavily_api_key)
 
 
+# Minimum relevance score threshold for search results
+MIN_RELEVANCE_SCORE = 0.75
+
+
 @tool
 def tavily_search(query: str, max_results: int = 5) -> str:
     """Search the web for company information using Tavily.
@@ -56,6 +60,7 @@ def tavily_search(query: str, max_results: int = 5) -> str:
     Returns:
         Formatted search results with titles, URLs, and content snippets.
         Each result includes the source URL for citation.
+        Only results with relevance score >= 0.75 are included.
     """
     # Ensure company name is in the query
     company_name = get_current_company()
@@ -66,6 +71,9 @@ def tavily_search(query: str, max_results: int = 5) -> str:
             original_query = query
             query = f"{company_name} {query}"
             logger.warning(f"Query missing company name. Modified: '{original_query}' -> '{query}'")
+    
+    logger.info(f"🔍 TAVILY SEARCH: '{query}'")
+    
     try:
         client = get_tavily_client()
         
@@ -78,6 +86,15 @@ def tavily_search(query: str, max_results: int = 5) -> str:
             include_raw_content=False, # Don't need full page content
         )
         
+        # Filter results by relevance score
+        all_results = response.get("results", [])
+        filtered_results = [r for r in all_results if r.get("score", 0) >= MIN_RELEVANCE_SCORE]
+        
+        # Log the filtering
+        logger.info(f"📊 TAVILY RESPONSE: {len(all_results)} total results, {len(filtered_results)} above score threshold ({MIN_RELEVANCE_SCORE})")
+        if response.get("answer"):
+            logger.debug(f"📝 TAVILY AI ANSWER: {response['answer'][:200]}...")
+        
         # Format results
         results = []
         
@@ -85,31 +102,41 @@ def tavily_search(query: str, max_results: int = 5) -> str:
         if response.get("answer"):
             results.append(f"**AI Summary:** {response['answer']}\n")
         
-        # Format individual results
-        for i, result in enumerate(response.get("results", []), 1):
+        # Format only high-relevance results
+        for i, result in enumerate(filtered_results, 1):
             title = result.get("title", "No title")
             url = result.get("url", "")
             content = result.get("content", "No content available")
+            score = result.get("score", 0)
+            
+            # Log each result for debugging
+            logger.debug(f"  Result {i} (score: {score:.3f}): {title[:50]}... | {url[:50]}...")
             
             results.append(
                 f"**Result {i}:** {title}\n"
                 f"URL: {url}\n"
+                f"Relevance: {score:.2f}\n"
                 f"Content: {content}\n"
             )
         
-        if not results:
+        if not results or (len(results) == 1 and results[0].startswith("**AI Summary:**")):
+            logger.warning(f"⚠️ No high-relevance results found for query: {query}")
+            # Still return the AI summary if available
+            if response.get("answer"):
+                return f"Search results for: '{query}'\n\n**AI Summary:** {response['answer']}\n\nNo individual results met the relevance threshold ({MIN_RELEVANCE_SCORE})."
             return f"No results found for query: {query}"
         
         formatted_output = f"Search results for: '{query}'\n"
-        formatted_output += f"Retrieved at: {datetime.utcnow().isoformat()}\n\n"
+        formatted_output += f"Retrieved at: {datetime.utcnow().isoformat()}\n"
+        formatted_output += f"Showing {len(filtered_results)} results with relevance >= {MIN_RELEVANCE_SCORE}\n\n"
         formatted_output += "\n---\n".join(results)
         
-        logger.info(f"Tavily search completed: {len(response.get('results', []))} results for '{query}'")
+        logger.info(f"✅ Tavily search completed: {len(filtered_results)} high-relevance results for '{query}'")
         
         return formatted_output
         
     except Exception as e:
-        logger.error(f"Tavily search failed for query '{query}': {str(e)}")
+        logger.error(f"❌ Tavily search failed for query '{query}': {str(e)}")
         return f"Search failed: {str(e)}. Please try a different query."
 
 
@@ -155,23 +182,46 @@ def tavily_search_company(
 def tavily_search_public_company(
     company_name: str,
     ticker: Optional[str] = None,
+    region: str = "USA",
 ) -> str:
     """Search for public company information from official sources.
     
-    Prioritizes SEC filings, investor relations, and stock exchange data.
+    Prioritizes official filings and investor relations based on region.
     Use this for publicly traded companies.
     
     Args:
         company_name: Name of the public company
         ticker: Stock ticker symbol (optional, improves results)
+        region: Company's region (USA, INDIA, UK, etc.) - affects which sources to prioritize
         
     Returns:
         Formatted search results prioritizing official sources.
     """
-    # Build query prioritizing official sources
-    if ticker:
-        query = f"{company_name} {ticker} SEC 10-K investor relations annual report"
-    else:
-        query = f"{company_name} SEC filing investor relations annual report stock"
+    # Build region-specific query
+    if region == "INDIA":
+        if ticker:
+            query = f"{company_name} {ticker} BSE NSE annual report investor relations financials"
+        else:
+            query = f"{company_name} BSE NSE annual report investor relations SEBI filing"
+    elif region == "UK":
+        if ticker:
+            query = f"{company_name} {ticker} LSE Companies House annual report"
+        else:
+            query = f"{company_name} LSE Companies House annual report investor relations"
+    elif region == "CHINA":
+        if ticker:
+            query = f"{company_name} {ticker} HKEX Shanghai Stock Exchange annual report"
+        else:
+            query = f"{company_name} Hong Kong Shanghai Stock Exchange annual report"
+    elif region == "JAPAN":
+        if ticker:
+            query = f"{company_name} {ticker} TSE Tokyo Stock Exchange annual report"
+        else:
+            query = f"{company_name} Tokyo Stock Exchange annual report investor relations"
+    else:  # USA and others
+        if ticker:
+            query = f"{company_name} {ticker} SEC 10-K investor relations annual report"
+        else:
+            query = f"{company_name} SEC filing investor relations annual report stock"
     
     return tavily_search.invoke({"query": query, "max_results": 5})

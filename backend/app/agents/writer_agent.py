@@ -5,12 +5,12 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
 from app.config import get_settings
-from app.prompts.writer_prompts import WRITER_SYSTEM_PROMPT, get_writer_prompt
+from app.prompts.writer_prompts import get_writer_system_prompt, get_writer_prompt
 
 logger = logging.getLogger(__name__)
 
 
-async def format_section(raw_data: str, section_name: str) -> str:
+async def format_section(raw_data: str, section_name: str, company_name: str = "") -> str:
     """
     Transform raw research data into professional prose.
     
@@ -20,11 +20,12 @@ async def format_section(raw_data: str, section_name: str) -> str:
     Args:
         raw_data: Raw extracted data from Research Agent
         section_name: Human-readable section name
+        company_name: Target company name (for filtering out other companies)
         
     Returns:
         Professionally formatted section content
     """
-    logger.info(f"Formatting section: {section_name}")
+    logger.info(f"Formatting section: {section_name} for company: {company_name}")
     
     settings = get_settings()
     
@@ -35,10 +36,12 @@ async def format_section(raw_data: str, section_name: str) -> str:
         google_api_key=settings.google_api_key,
     )
     
-    # Build messages
+    # Build messages with company-specific system prompt
+    system_prompt = get_writer_system_prompt(company_name) if company_name else get_writer_system_prompt("the target company")
+    
     messages = [
-        SystemMessage(content=WRITER_SYSTEM_PROMPT),
-        HumanMessage(content=get_writer_prompt(section_name, raw_data)),
+        SystemMessage(content=system_prompt),
+        HumanMessage(content=get_writer_prompt(section_name, raw_data, company_name)),
     ]
     
     try:

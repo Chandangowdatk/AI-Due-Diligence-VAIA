@@ -287,22 +287,39 @@ For INDIAN companies specifically:
 """,
     
     SectionId.BUSINESS_MODEL: """
-Extract business model and market context:
+Extract business model and market context FOR "{company_name}" ONLY.
 
-**PRIORITY DATA FOR VISUALIZATIONS (MUST FIND):**
+⚠️ CRITICAL: This section MUST include detailed revenue breakdown data for visualization.
 
-REVENUE BREAKDOWN (for bar chart):
-- Revenue by segment/product line with:
-  * Segment name
-  * Revenue amount (in USD millions)
-  * Percentage of total revenue
-- Examples: Product Sales, Services, Subscriptions, Licensing, etc.
-- Geographic revenue breakdown if available
+**PRIORITY DATA FOR VISUALIZATIONS (MUST FIND - CRITICAL):**
+
+REVENUE BREAKDOWN BY SEGMENT (for bar chart visualization):
+This is the MOST IMPORTANT data for this section. You MUST find:
+- Revenue by business segment/division with:
+  * Segment name (e.g., "Mobile Services", "Enterprise", "Digital TV", "Africa Operations")
+  * Revenue amount in ORIGINAL CURRENCY (INR Crores for Indian companies)
+  * Percentage of total revenue for each segment
+- Geographic revenue breakdown (e.g., India vs Africa vs Other)
+
+⚠️ FORMAT YOUR REVENUE BREAKDOWN EXACTLY LIKE THIS:
+```
+REVENUE BREAKDOWN BY SEGMENT:
+Total Revenue: ₹1,50,000 Crores (or $X Million for US companies)
+
+1. India Mobile Services: ₹85,500 Crores (57% of total)
+2. Airtel Africa: ₹40,500 Crores (27% of total)
+3. India Enterprise & Homes: ₹24,000 Crores (16% of total)
+```
+
+BUSINESS MODEL DETAILS:
+- Core value proposition and how {company_name} makes money
+- Revenue streams (subscriptions, transactions, licensing, etc.)
+- Pricing strategy and mechanisms
+- Customer segments (B2C, B2B, enterprise)
 
 REVENUE MODEL:
-- Total revenue (latest fiscal year)
+- Total revenue (latest fiscal year) in ORIGINAL CURRENCY
 - Revenue growth rate YoY
-- Pricing mechanisms and contract structures
 - Customer concentration (top customers % of revenue)
 
 COST STRUCTURE:
@@ -311,93 +328,152 @@ COST STRUCTURE:
 - Operating leverage
 
 UNIT ECONOMICS (if available):
-- Contribution margin
+- Average Revenue Per User (ARPU) for telecom/subscription businesses
 - Customer acquisition cost (CAC)
 - Lifetime value (LTV)
-- LTV/CAC ratio
-- Payback period
+- Churn rate
 
 MARKET SIZE:
 - TAM, SAM, SOM estimates
 - Market growth rate
 
 REQUIRED SEARCH QUERIES (use these exact queries with company name):
-- "[COMPANY] revenue breakdown by segment"
-- "[COMPANY] business segments revenue contribution"
-- "[COMPANY] annual report revenue 2023 2024"
-- "[COMPANY] revenue model pricing"
-- "[COMPANY] geographic revenue breakdown"
+- "{company_name} revenue breakdown by segment percentage"
+- "{company_name} segment wise revenue contribution annual report"
+- "{company_name} business segments revenue FY2024 FY2025"
+- "{company_name} investor presentation segment revenue"
+- "{company_name} geographic revenue India Africa breakdown"
+
+For INDIAN PUBLIC companies specifically:
+- "{company_name} BSE annual report segment revenue"
+- "{company_name} quarterly results segment wise"
+- "{company_name} investor presentation revenue mix"
+- "{company_name} moneycontrol segment revenue breakdown"
+
+⚠️ IMPORTANT: The revenue breakdown visualization REQUIRES segment-wise data with percentages.
+If you cannot find exact revenue amounts, at least find the percentage contribution of each segment.
 """,
     
     SectionId.MARKET_INDUSTRY: """
-Extract market and industry analysis:
+Extract market and industry analysis FOR THE TARGET COMPANY "{company_name}" ONLY.
 
-INDUSTRY OVERVIEW:
-- Industry name and definition
-- Market size (with year)
+⚠️ CRITICAL: This section is about the INDUSTRY that "{company_name}" operates in.
+- All data must be relevant to "{company_name}"'s specific industry/sector
+- Do NOT include generic industry information unrelated to "{company_name}"
+
+INDUSTRY OVERVIEW (for {company_name}'s industry):
+- Industry name and definition (the industry {company_name} operates in)
+- Market size (with year) for {company_name}'s target market
 - Historical and projected growth rates
 
-DEMAND DRIVERS:
-- Structural drivers (long-term trends)
+DEMAND DRIVERS (for {company_name}'s market):
+- Structural drivers (long-term trends affecting {company_name})
 - Cyclical drivers (economic sensitivity)
 - Customer behavior and adoption cycles
 
 INDUSTRY STRUCTURE:
 - Fragmented vs consolidated
-- Entry barriers
+- Entry barriers in {company_name}'s market
 - Substitution risks
-- Regulatory environment
+- Regulatory environment affecting {company_name}
+
+REQUIRED SEARCH QUERIES (MUST include company name):
+- "{company_name} industry market size"
+- "{company_name} sector growth outlook"
+- "{company_name} market trends analysis"
+- "{company_name} industry report"
 """,
     
     SectionId.COMPETITIVE_LANDSCAPE: """
-Extract competitive landscape data:
+Extract competitive landscape data FOR "{company_name}" ONLY.
+
+⚠️ CRITICAL: This section is about "{company_name}" and its competitors.
+- The target company is "{company_name}"
+- Identify competitors in the SAME PRIMARY BUSINESS as "{company_name}"
+
+**IMPORTANT FOR CONGLOMERATES:**
+If "{company_name}" operates in multiple industries (like Reliance Industries which has Oil & Gas, Telecom, Retail):
+- Focus on the PRIMARY/LARGEST business segment
+- Clearly state which market/segment the competitive analysis is for
+- Do NOT mix competitors from different industries
 
 **PRIORITY DATA FOR VISUALIZATIONS (MUST FIND):**
 
 MARKET SHARE (for pie chart):
-- Market share percentages for:
-  * Target company
-  * Top 5-6 competitors
+- First, identify {company_name}'s PRIMARY business segment
+- Market share percentages for that specific segment:
+  * {company_name} (the target company) - MUST be included
+  * Top 5-6 direct competitors in the SAME segment
   * "Others" category
+- Clearly label which market/segment this represents
 
-COMPETITORS:
-- Direct competitors: name, revenue estimate, market share
-- Indirect competitors and substitutes
-- Key strengths and weaknesses of each
+COMPETITORS OF {company_name}:
+- Direct competitors in the SAME industry/segment
+- For each competitor: name, approximate revenue, market share
+- Key competitive advantages of each vs {company_name}
 
-MARKET POSITIONING:
-- Target company's market share
-- Competitive moat sources (brand, switching costs, network effects)
-- Differentiation strategy
+MARKET POSITIONING OF {company_name}:
+- {company_name}'s market share in its primary market
+- Competitive moat sources (brand, scale, vertical integration, etc.)
+- {company_name}'s differentiation strategy
 
 REQUIRED SEARCH QUERIES (use these exact queries with company name):
-- "[COMPANY] competitors market share"
-- "[COMPANY] vs competitors comparison"
-- "[COMPANY] competitive landscape industry"
-- "[COMPANY] market position ranking"
-- "[COMPANY] industry market share breakdown"
+- "{company_name} main competitors same industry"
+- "{company_name} market share primary business"
+- "{company_name} vs [specific competitor] comparison"
+- "{company_name} competitive position industry ranking"
+
+For INDIAN companies specifically:
+- "{company_name} competitors India market share"
+- "{company_name} industry peers comparison"
+- "{company_name} market leader position sector"
+
+⚠️ VALIDATION: Before including a competitor, verify they compete in the SAME market as {company_name}'s primary business.
 """,
     
     SectionId.FINANCIALS: """
-Extract financial data:
+Extract financial data FOR "{company_name}" ONLY.
+
+⚠️ CRITICAL - CURRENCY RULES (MUST FOLLOW):
+1. PRESERVE the ORIGINAL CURRENCY from the source data - DO NOT CONVERT
+2. For Indian companies: Report ALL numbers in INR Crores (₹ Cr) - NEVER convert to USD
+3. For US companies: Report ALL numbers in USD Millions
+4. ALWAYS state the currency and unit explicitly: "Revenue: ₹9,738 Crores" or "Revenue: $115,532 Million"
+5. If you find data in USD for an Indian company, search again for INR data from Indian sources
 
 **PRIORITY DATA FOR VISUALIZATIONS (MUST FIND):**
 
 FINANCIAL SUMMARY TABLE (for chart and table):
 For each fiscal year (at least 3-5 years), extract:
-- Year/Period (e.g., FY2021, FY2022, FY2023)
-- Revenue (in USD millions)
-- Gross Profit (in USD millions)
+- Year/Period (e.g., FY2021, FY2022, FY2023, FY2024, FY2025)
+- Revenue (in ORIGINAL currency and unit - e.g., ₹9,738 Crores)
+- Gross Profit (in ORIGINAL currency)
 - Gross Margin % 
-- EBITDA (in USD millions)
+- EBITDA (in ORIGINAL currency)
 - EBITDA Margin %
-- Net Profit/Loss (in USD millions) - can be negative
+- Net Profit/Loss (in ORIGINAL currency) - can be negative
 - Net Profit Margin %
 
-Format the data clearly like:
-FY2023: Revenue $X million, Gross Profit $X million (X%), EBITDA $X million (X%), Net Profit $X million (X%)
-FY2022: Revenue $X million, Gross Profit $X million (X%), EBITDA $X million (X%), Net Profit $X million (X%)
-...
+⚠️ FORMAT YOUR OUTPUT EXACTLY LIKE THIS:
+
+For INDIAN companies (use INR Crores):
+```
+CURRENCY: INR
+UNIT: Crores
+
+FY2025: Revenue ₹9,738 Crores, EBITDA ₹2,500 Crores (25.7%), Net Profit ₹1,200 Crores (12.3%)
+FY2024: Revenue ₹8,500 Crores, EBITDA ₹2,100 Crores (24.7%), Net Profit ₹1,000 Crores (11.8%)
+FY2023: Revenue ₹7,200 Crores, EBITDA ₹1,800 Crores (25.0%), Net Profit ₹850 Crores (11.8%)
+```
+
+For US companies (use USD Millions):
+```
+CURRENCY: USD
+UNIT: Millions
+
+FY2024: Revenue $115,532 M, EBITDA $24,310 M (21.0%), Net Profit $8,341 M (7.2%)
+FY2023: Revenue $107,890 M, EBITDA $21,709 M (20.1%), Net Profit $8,338 M (7.7%)
+```
 
 HISTORICAL FINANCIALS:
 - Revenue and growth rate YoY
@@ -417,81 +493,143 @@ WORKING CAPITAL:
 - Cash conversion cycle
 
 REQUIRED SEARCH QUERIES (use these exact queries with company name):
-- "[COMPANY] financial results revenue EBITDA profit 2023 2024"
-- "[COMPANY] annual report financial statements"
-- "[COMPANY] quarterly results earnings"
-- "[COMPANY] 10-K SEC filing" (for public companies)
-- "[COMPANY] investor presentation financials"
 
-For PUBLIC companies: Prioritize SEC 10-K and 10-Q filings.
+For INDIAN PUBLIC companies (PRIORITIZE THESE):
+- "{company_name} annual report FY2024 FY2025 revenue crores"
+- "{company_name} BSE NSE financial results crores"
+- "{company_name} quarterly results Q4 FY2024 crores"
+- "{company_name} investor presentation financials INR"
+- "{company_name} moneycontrol financials revenue profit"
+
+For US PUBLIC companies:
+- "{company_name} 10-K SEC filing revenue"
+- "{company_name} annual report financial statements USD"
+- "{company_name} quarterly results earnings"
+
+⛔ DO NOT report Indian company financials in USD. Always use INR Crores for Indian companies.
 """,
     
     SectionId.OPERATIONS: """
-Extract operational information:
+Extract operational information FOR "{company_name}" ONLY.
 
-SUPPLY CHAIN:
-- Key suppliers and concentration
-- Supply chain risks
-- Manufacturing/service delivery locations
+⚠️ CRITICAL: Only include operational data specifically about "{company_name}".
 
-TECHNOLOGY:
-- Technology stack
-- R&D spend (% of revenue)
-- Patents held
+SUPPLY CHAIN (for {company_name}):
+- {company_name}'s key suppliers and concentration
+- Supply chain risks specific to {company_name}
+- {company_name}'s manufacturing/service delivery locations
 
-QUALITY:
-- Quality certifications
-- Quality control measures
+TECHNOLOGY (for {company_name}):
+- {company_name}'s technology stack
+- {company_name}'s R&D spend (% of revenue)
+- Patents held by {company_name}
+
+QUALITY (for {company_name}):
+- Quality certifications held by {company_name}
+- {company_name}'s quality control measures
+
+REQUIRED SEARCH QUERIES (MUST include company name):
+- "{company_name} operations manufacturing facilities"
+- "{company_name} supply chain suppliers"
+- "{company_name} technology R&D patents"
+- "{company_name} quality certifications ISO"
 """,
     
     SectionId.RISKS_MITIGANTS: """
-Extract risk information:
+Extract risk information FOR "{company_name}" ONLY.
 
-STRATEGIC RISKS:
-- Market risks, competitive threats
+⚠️ CRITICAL: Only include risks specifically relevant to "{company_name}".
+- Do NOT include generic industry risks without connecting them to {company_name}
+- Every risk must be verifiable as affecting {company_name}
 
-FINANCIAL RISKS:
-- Liquidity, leverage, currency exposure
+STRATEGIC RISKS (for {company_name}):
+- Market risks affecting {company_name}
+- Competitive threats to {company_name}
+- Technology disruption risks
 
-REGULATORY RISKS:
-- Compliance requirements, regulatory changes
+FINANCIAL RISKS (for {company_name}):
+- {company_name}'s liquidity position
+- {company_name}'s leverage and debt levels
+- Currency exposure for {company_name}
+- Interest rate sensitivity
 
-EXECUTION RISKS:
-- Operational challenges, key person dependency
+REGULATORY RISKS (for {company_name}):
+- Compliance requirements affecting {company_name}
+- Regulatory changes impacting {company_name}
+- Government policy risks
+- Environmental regulations
+
+OPERATIONAL RISKS (for {company_name}):
+- Supply chain vulnerabilities
+- Key person dependency at {company_name}
+- Labor and workforce risks
+- Technology/IT risks
+
+MARKET RISKS:
+- Commodity price exposure
+- Demand fluctuation risks
+- Geographic concentration risks
 
 BLACK SWAN RISKS:
-- Tail risks specific to company/industry
+- Tail risks specific to {company_name}'s business
+- Geopolitical risks
 
 For each risk, try to identify:
 - Probability (low/medium/high)
 - Impact (low/medium/high)
-- Existing mitigation measures
+- Existing mitigation measures by {company_name}
+
+REQUIRED SEARCH QUERIES (MUST include company name):
+- "{company_name} risk factors annual report"
+- "{company_name} business risks challenges"
+- "{company_name} regulatory compliance risks"
+- "{company_name} key risks investor presentation"
+
+For INDIAN PUBLIC companies specifically:
+- "{company_name} risk factors BSE annual report"
+- "{company_name} business challenges moneycontrol"
+- "{company_name} regulatory risks SEBI"
+
+For US PUBLIC companies:
+- "{company_name} 10-K risk factors SEC"
 """,
     
     SectionId.ESG: """
-Extract ESG (Environmental, Social, Governance) data:
+Extract ESG (Environmental, Social, Governance) data FOR "{company_name}" ONLY.
 
-ENVIRONMENTAL:
-- Carbon footprint and emissions
-- Resource usage
-- Climate risk exposure
-- Environmental initiatives
+⚠️ CRITICAL: Only include ESG information specifically about "{company_name}".
+- Do NOT include ESG data about other companies
+- Do NOT include generic industry ESG information
+- Every data point must be verifiable as being about "{company_name}"
 
-SOCIAL:
-- Employee count and safety record
-- Labor practices
-- Diversity metrics (DEI)
-- Community impact
+ENVIRONMENTAL (for {company_name}):
+- {company_name}'s carbon footprint and emissions
+- {company_name}'s resource usage
+- Climate risk exposure for {company_name}
+- {company_name}'s environmental initiatives and commitments
 
-GOVERNANCE:
-- Board independence ratio
-- Audit quality
-- Related-party transactions
-- Transparency and disclosure quality
+SOCIAL (for {company_name}):
+- {company_name}'s employee count and safety record
+- {company_name}'s labor practices
+- {company_name}'s diversity metrics (DEI)
+- {company_name}'s community impact programs
 
-ESG RATINGS:
-- Any third-party ESG ratings
-- ESG certifications
+GOVERNANCE (for {company_name}):
+- {company_name}'s board independence ratio
+- {company_name}'s audit quality
+- Related-party transactions at {company_name}
+- {company_name}'s transparency and disclosure quality
+
+ESG RATINGS (for {company_name}):
+- Any third-party ESG ratings for {company_name}
+- ESG certifications held by {company_name}
+
+REQUIRED SEARCH QUERIES (MUST include company name):
+- "{company_name} ESG report sustainability"
+- "{company_name} carbon emissions environmental"
+- "{company_name} corporate social responsibility CSR"
+- "{company_name} governance board diversity"
+- "{company_name} sustainability report annual"
 """,
 }
 
@@ -518,6 +656,9 @@ def get_research_prompt(
         source_priority = PRIVATE_COMPANY_SOURCES
     
     section_requirements = SECTION_REQUIREMENTS.get(section_id, "Gather comprehensive information for this section.")
+    
+    # Replace {company_name} placeholders in section requirements
+    section_requirements = section_requirements.replace("{company_name}", company_name)
     
     return RESEARCH_AGENT_SYSTEM_PROMPT.format(
         section_name=section_name,

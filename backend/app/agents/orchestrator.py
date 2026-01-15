@@ -30,7 +30,7 @@ SECTION_ORDER = [
 ]
 
 # Timeout per section (seconds)
-SECTION_TIMEOUT = 90
+SECTION_TIMEOUT = 120
 
 
 async def process_report(
@@ -170,6 +170,7 @@ async def _process_section(
             raw_data=section_data.raw_data,
             section_id=section_id,
             company_name=company_name,
+            region=region,
         )
         
         logger.info(f"Extraction result for {section_name}: {'SUCCESS' if structured_data else 'NONE'}")
@@ -187,6 +188,7 @@ async def _process_section(
         section_data.formatted_content = await format_section(
             raw_data=section_data.raw_data,
             section_name=section_name,
+            company_name=company_name,
         )
         
         # Mark complete
