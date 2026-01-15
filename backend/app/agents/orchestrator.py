@@ -31,6 +31,7 @@ SECTION_ORDER = [
 
 # Timeout per section (seconds)
 SECTION_TIMEOUT = 120
+BUSINESS_MODEL_TIMEOUT = 180  # Extra time for revenue breakdown searches
 
 
 async def process_report(
@@ -130,15 +131,19 @@ async def _process_section(
     
     try:
         # Step 1: Research
+        # Use more iterations for sections that need extensive data gathering
+        max_iterations = 5 if section_id == SectionId.BUSINESS_MODEL else 3
+        timeout = BUSINESS_MODEL_TIMEOUT if section_id == SectionId.BUSINESS_MODEL else SECTION_TIMEOUT
+        
         research_result = await asyncio.wait_for(
             research_section(
                 company_name=company_name,
                 section_id=section_id,
                 is_public=is_public,
                 region=region,
-                max_iterations=3,
+                max_iterations=max_iterations,
             ),
-            timeout=SECTION_TIMEOUT,
+            timeout=timeout,
         )
         
         section_data.raw_data = research_result["raw_data"]

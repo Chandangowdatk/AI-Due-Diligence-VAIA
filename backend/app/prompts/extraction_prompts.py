@@ -99,18 +99,32 @@ From the text, extract revenue streams/segments and their contributions.
 
 ⚠️ THIS IS CRITICAL FOR VISUALIZATION - You MUST extract segment-wise revenue data.
 
-Look for patterns like:
+**SEARCH PATTERNS - Look for ANY of these formats:**
 - "India Mobile: 57% of revenue" or "Mobile Services contributed 57%"
 - "Revenue from Africa: ₹40,500 Crores (27%)"
 - "Segment-wise: Mobile 57%, Africa 27%, Enterprise 16%"
+- "India Mobile services, which accounted for 57% of total revenue"
+- "Other significant contributors were Airtel Africa at 27%"
 - Tables showing segment revenue breakdown
+- "Revenue breakdown by segment"
+- "Business segment contribution"
+- "Geographic revenue split"
 
-⚠️ NUMBER PARSING RULES:
+**NUMBER PARSING RULES:**
 - Look for revenue data in various formats: "₹301,228 Mn", "Rs. 301,228 million", "301228 crores", etc.
 - Convert "Mn" or "million" to the actual number (e.g., ₹301,228 Mn = 301228)
 - If data is in percentages only (e.g., "India Mobile: 57%"), use the percentage as the main value
 - Extract BOTH absolute revenue numbers AND percentages if available
 - If only percentages are available, that's still valuable - include them!
+
+**LOOK FOR SEGMENT NAMES LIKE:**
+- Mobile Services / Wireless / India Mobile
+- Enterprise / B2B / Corporate / Airtel Business
+- Africa / International / Airtel Africa
+- Homes / Broadband / Fixed Line
+- Digital TV / DTH
+- Payments / Fintech
+- Cloud / Data Centers
 
 Return JSON in this format:
 {
@@ -125,7 +139,7 @@ Return JSON in this format:
     "fiscal_year": "FY2024"
 }
 
-IMPORTANT:
+**IMPORTANT RULES:**
 - PRESERVE the original currency and units from the source data
 - If data is in INR (₹, Rs), use currency: "INR"
 - If numbers are in Crores (Cr), use unit: "crores"
@@ -136,9 +150,9 @@ IMPORTANT:
 - Include any revenue breakdown you can find (by product, geography, customer segment, etc.)
 - Even partial data is valuable - if you find 2 segments out of 4, include those 2
 
-⚠️ FALLBACK: If you cannot find absolute revenue numbers but find percentages like:
-"India Mobile: 57%, Africa: 27%, Enterprise: 16%"
-Then return:
+**FALLBACK - If you find percentages without absolute numbers:**
+Example text: "India Mobile: 57%, Africa: 27%, Enterprise: 16%"
+Return:
 {
     "revenue_streams": [
         {"segment": "India Mobile", "revenue": 0, "percentage": 57.0},
@@ -149,6 +163,8 @@ Then return:
     "currency": "INR",
     "unit": "crores"
 }
+
+**CRITICAL: Do NOT return empty data if you can find ANY segment information in the text.**
 """,
 
     SectionId.COMPETITIVE_LANDSCAPE: """Extract market share data for visualization.

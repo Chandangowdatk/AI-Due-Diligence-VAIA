@@ -289,69 +289,84 @@ For INDIAN companies specifically:
     SectionId.BUSINESS_MODEL: """
 Extract business model and market context FOR "{company_name}" ONLY.
 
-⚠️ CRITICAL: This section MUST include detailed revenue breakdown data for visualization.
+⚠️⚠️⚠️ CRITICAL - REVENUE BREAKDOWN IS MANDATORY ⚠️⚠️⚠️
+This section MUST include detailed revenue breakdown data for visualization.
+DO NOT complete this section without finding segment-wise revenue data.
 
-**PRIORITY DATA FOR VISUALIZATIONS (MUST FIND - CRITICAL):**
+**PRIORITY #1 - REVENUE BREAKDOWN BY SEGMENT (MANDATORY FOR VISUALIZATION):**
 
-REVENUE BREAKDOWN BY SEGMENT (for bar chart visualization):
-This is the MOST IMPORTANT data for this section. You MUST find:
+You MUST search extensively until you find revenue breakdown data. This is NON-NEGOTIABLE.
+
+What to find:
 - Revenue by business segment/division with:
   * Segment name (e.g., "Mobile Services", "Enterprise", "Digital TV", "Africa Operations")
   * Revenue amount in ORIGINAL CURRENCY (INR Crores for Indian companies)
   * Percentage of total revenue for each segment
 - Geographic revenue breakdown (e.g., India vs Africa vs Other)
 
-⚠️ FORMAT YOUR REVENUE BREAKDOWN EXACTLY LIKE THIS:
+⚠️ FORMAT YOUR REVENUE BREAKDOWN EXACTLY LIKE THIS (REQUIRED):
 ```
 REVENUE BREAKDOWN BY SEGMENT:
-Total Revenue: ₹1,50,000 Crores (or $X Million for US companies)
+Total Revenue: ₹1,50,000 Crores (FY2024)
 
 1. India Mobile Services: ₹85,500 Crores (57% of total)
 2. Airtel Africa: ₹40,500 Crores (27% of total)
 3. India Enterprise & Homes: ₹24,000 Crores (16% of total)
 ```
 
-BUSINESS MODEL DETAILS:
+If you only find percentages without absolute numbers, STILL INCLUDE THEM:
+```
+REVENUE BREAKDOWN BY SEGMENT (Percentages):
+1. India Mobile Services: 57% of total revenue
+2. Airtel Africa: 27% of total revenue
+3. India Enterprise & Homes: 16% of total revenue
+```
+
+**MANDATORY SEARCH QUERIES - YOU MUST TRY ALL OF THESE:**
+1. "{company_name} segment wise revenue breakdown FY2024"
+2. "{company_name} annual report segment revenue contribution"
+3. "{company_name} investor presentation revenue mix"
+4. "{company_name} business segments percentage revenue"
+5. "{company_name} revenue by division geography"
+
+For INDIAN PUBLIC companies (MUST TRY):
+6. "{company_name} BSE annual report segment revenue"
+7. "{company_name} quarterly results segment wise revenue"
+8. "{company_name} moneycontrol segment revenue"
+9. "{company_name} screener segment analysis"
+10. "{company_name} trendlyne segment revenue breakdown"
+
+**PRIORITY #2 - BUSINESS MODEL DETAILS:**
 - Core value proposition and how {company_name} makes money
 - Revenue streams (subscriptions, transactions, licensing, etc.)
 - Pricing strategy and mechanisms
 - Customer segments (B2C, B2B, enterprise)
 
-REVENUE MODEL:
+**PRIORITY #3 - REVENUE MODEL:**
 - Total revenue (latest fiscal year) in ORIGINAL CURRENCY
 - Revenue growth rate YoY
 - Customer concentration (top customers % of revenue)
 
-COST STRUCTURE:
-- Fixed vs variable costs breakdown
-- Major cost drivers
-- Operating leverage
-
-UNIT ECONOMICS (if available):
+**PRIORITY #4 - UNIT ECONOMICS (if available):**
 - Average Revenue Per User (ARPU) for telecom/subscription businesses
 - Customer acquisition cost (CAC)
 - Lifetime value (LTV)
 - Churn rate
 
-MARKET SIZE:
+**PRIORITY #5 - COST STRUCTURE:**
+- Fixed vs variable costs breakdown
+- Major cost drivers
+- Operating leverage
+
+**PRIORITY #6 - MARKET SIZE:**
 - TAM, SAM, SOM estimates
 - Market growth rate
 
-REQUIRED SEARCH QUERIES (use these exact queries with company name):
-- "{company_name} revenue breakdown by segment percentage"
-- "{company_name} segment wise revenue contribution annual report"
-- "{company_name} business segments revenue FY2024 FY2025"
-- "{company_name} investor presentation segment revenue"
-- "{company_name} geographic revenue India Africa breakdown"
-
-For INDIAN PUBLIC companies specifically:
-- "{company_name} BSE annual report segment revenue"
-- "{company_name} quarterly results segment wise"
-- "{company_name} investor presentation revenue mix"
-- "{company_name} moneycontrol segment revenue breakdown"
-
-⚠️ IMPORTANT: The revenue breakdown visualization REQUIRES segment-wise data with percentages.
-If you cannot find exact revenue amounts, at least find the percentage contribution of each segment.
+⚠️ FINAL CHECK: Before completing this section, verify you have included:
+✅ Revenue breakdown by segment with percentages
+✅ At least 2-3 business segments identified
+✅ Total revenue figure
+If you don't have segment breakdown, KEEP SEARCHING - try different query variations.
 """,
     
     SectionId.MARKET_INDUSTRY: """
