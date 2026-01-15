@@ -12,6 +12,7 @@ from app.storage.memory_store import report_store
 from app.agents.research_agent import research_section
 from app.agents.writer_agent import format_section
 from app.agents.data_extractor import extract_structured_data, generate_visualization_data
+from app.services.gemini_files import clear_uploaded_files
 
 logger = logging.getLogger(__name__)
 
@@ -81,6 +82,7 @@ async def process_report(
                 company_name=company_name,
                 is_public=is_public,
                 region=region,
+                research_id=report_id,  # Pass research_id for document access
             )
         
         # Mark report as complete
@@ -99,6 +101,8 @@ async def process_report(
     finally:
         report.updated_at = datetime.utcnow()
         report_store.update_report(report)
+        # Cleanup uploaded files reference
+        clear_uploaded_files(report_id)
 
 
 async def _process_section(
@@ -107,6 +111,7 @@ async def _process_section(
     company_name: str,
     is_public: bool,
     region: str = "OTHER",
+    research_id: str = None,
 ) -> None:
     """
     Process a single section through the Research → Extract → Write pipeline.
@@ -142,6 +147,7 @@ async def _process_section(
                 is_public=is_public,
                 region=region,
                 max_iterations=max_iterations,
+                research_id=research_id,  # Pass for document access
             ),
             timeout=timeout,
         )

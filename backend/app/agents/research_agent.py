@@ -17,6 +17,12 @@ from app.tools.tavily_tool import (
     set_current_company,
 )
 from app.tools.think_tool import think, assess_section_completeness
+from app.tools.document_query_tool import (
+    query_uploaded_documents,
+    set_document_context,
+    clear_document_context,
+    has_uploaded_documents,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +33,7 @@ async def research_section(
     is_public: bool = False,
     region: str = "OTHER",
     max_iterations: int = 3,
+    research_id: str = None,
 ) -> dict:
     """
     Research a specific section for a company.
@@ -37,6 +44,7 @@ async def research_section(
         is_public: Whether the company is publicly traded
         region: Company's primary region (USA, INDIA, UK, etc.)
         max_iterations: Maximum search-think cycles
+        research_id: Research ID for accessing uploaded documents
         
     Returns:
         dict with keys:
@@ -51,6 +59,14 @@ async def research_section(
     # CRITICAL: Set the current company for query validation
     # This ensures all search queries include the company name
     set_current_company(company_name)
+    
+    # Set document context if research_id provided
+    if research_id:
+        set_document_context(research_id, company_name)
+    
+    # Check if documents are available
+    docs_available = has_uploaded_documents() if research_id else False
+    logger.info(f"📄 Uploaded documents available: {docs_available}")
     
     # Get section-specific system prompt with region-aware source prioritization
     system_prompt = get_research_prompt(
@@ -70,7 +86,7 @@ async def research_section(
         google_api_key=settings.google_api_key,
     )
     
-    # Define tools
+    # Define tools - include document query if documents available
     tools = [
         tavily_search,
         tavily_search_company,
@@ -79,6 +95,11 @@ async def research_section(
         assess_section_completeness,
     ]
     
+    # Add document query tool if documents are available
+    if docs_available:
+        tools.insert(0, query_uploaded_documents)  # Add at beginning for priority
+        logger.info("📄 Document query tool added to agent")
+    
     # Create the agent with system prompt as SystemMessage
     agent = create_react_agent(
         model=model,
@@ -86,20 +107,47 @@ async def research_section(
         prompt=SystemMessage(content=system_prompt),
     )
     
+    # Build document instruction if available
+    doc_instruction = ""
+    if docs_available:
+        doc_instruction = f"""
+⚠️ IMPORTANT - UPLOADED DOCUMENTS AVAILABLE:
+The user has uploaded documents (pitch decks, memos, financial statements, etc.) for this research.
+You MUST use the query_uploaded_documents tool FIRST before using web search.
+These documents contain proprietary information not available on the web.
+
+START by querying the uploaded documents for information relevant to this section.
+Only use web search (tavily_search) to fill gaps not covered by the documents.
+"""
+    
     # Create the user message - be VERY explicit about the company
     section_name = section_id.value.replace('_', ' ').title()
+    
+    # Build search instructions based on document availability
+    if docs_available:
+        search_instructions = f"""START YOUR RESEARCH by querying uploaded documents:
+1. Use query_uploaded_documents with a question about {section_name.lower()}
+2. Then use tavily_search to fill any gaps"""
+        doc_reminder = "6. Query uploaded documents FIRST before web search"
+        primary_source_note = "- Uploaded documents are your PRIMARY source"
+    else:
+        search_instructions = f"""START YOUR RESEARCH with these exact searches:
+1. Use tavily_search with query: "{company_name} {section_name.lower()} overview"
+2. Use tavily_search with query: "{company_name} official website {section_name.lower()}\""""
+        doc_reminder = ""
+        primary_source_note = ""
+    
     user_message = f"""Research the {section_name} section for **{company_name}**.
-
+{doc_instruction}
 ⚠️ CRITICAL INSTRUCTIONS - READ CAREFULLY:
 1. You are researching ONLY "{company_name}" - no other company
 2. EVERY search query MUST start with "{company_name}"
 3. If you find information about a different company, IGNORE it completely
 4. Only report facts that are specifically about "{company_name}"
 5. VERIFY every data point mentions "{company_name}" before including it
+{doc_reminder}
 
-START YOUR RESEARCH with these exact searches:
-1. Use tavily_search with query: "{company_name} {section_name.lower()} overview"
-2. Use tavily_search with query: "{company_name} official website {section_name.lower()}"
+{search_instructions}
 
 Then use the think tool to analyze what you found and identify gaps.
 Continue searching until you have comprehensive coverage or reach {max_iterations} iterations.
@@ -114,7 +162,8 @@ If you cannot verify the data is about "{company_name}", DO NOT include it.
 REMEMBER: 
 - Target company: {company_name}
 - Section: {section_name}
-- All data must be about {company_name} ONLY"""
+- All data must be about {company_name} ONLY
+{primary_source_note}"""
 
     try:
         # Invoke the agent

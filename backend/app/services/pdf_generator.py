@@ -92,6 +92,40 @@ async def generate_pdf(research_id: str, report: CompanyReport) -> bytes:
                     -webkit-print-color-adjust: exact !important;
                     print-color-adjust: exact !important;
                 }
+                
+                /* Force left alignment for all text */
+                body, p, li, h1, h2, h3, h4, h5, h6, div, span {
+                    text-align: left !important;
+                }
+                
+                /* Ensure proper list styling */
+                ul {
+                    list-style-type: disc !important;
+                    padding-left: 24px !important;
+                    margin-left: 0 !important;
+                }
+                
+                ol {
+                    list-style-type: decimal !important;
+                    padding-left: 24px !important;
+                    margin-left: 0 !important;
+                }
+                
+                li {
+                    display: list-item !important;
+                    text-align: left !important;
+                    margin-bottom: 8px !important;
+                }
+                
+                /* Prose print styles */
+                .prose-print {
+                    text-align: left !important;
+                }
+                
+                .prose-print p,
+                .prose-print li {
+                    text-align: left !important;
+                }
             """)
             
             # Generate PDF with professional settings
@@ -99,14 +133,21 @@ async def generate_pdf(research_id: str, report: CompanyReport) -> bytes:
             pdf_bytes = await page.pdf(
                 format="A4",
                 print_background=True,
-                prefer_css_page_size=True,
+                prefer_css_page_size=False,  # Use our margin settings
                 margin={
-                    "top": "0",
-                    "bottom": "0",
-                    "left": "0",
-                    "right": "0",
+                    "top": "15mm",
+                    "bottom": "20mm",
+                    "left": "15mm",
+                    "right": "15mm",
                 },
-                display_header_footer=False,  # We handle headers/footers in the page itself
+                display_header_footer=True,
+                header_template='<div></div>',  # Empty header
+                footer_template='''
+                    <div style="width: 100%; font-size: 9px; color: #6b7280; padding: 0 15mm; display: flex; justify-content: space-between;">
+                        <span>Due Diligence Report</span>
+                        <span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
+                    </div>
+                ''',
             )
             
             logger.info(f"PDF generated successfully for report {research_id} ({len(pdf_bytes)} bytes)")

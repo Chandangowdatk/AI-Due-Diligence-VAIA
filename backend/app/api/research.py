@@ -14,6 +14,7 @@ from app.models.sections import SECTION_CONFIGS
 from app.storage.memory_store import report_store
 from app.agents.orchestrator import process_report, SECTION_ORDER
 from app.agents.company_classifier import classify_company
+from app.services.gemini_files import set_uploaded_files
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +36,15 @@ async def start_research(
     research_id = str(uuid.uuid4())
     
     logger.info(f"Starting research for '{request.company_name}' with ID: {research_id}")
+    
+    # Store uploaded file references if provided
+    if request.uploaded_files:
+        file_infos = [
+            {"name": f.gemini_file_name, "display_name": f.filename}
+            for f in request.uploaded_files
+        ]
+        set_uploaded_files(research_id, file_infos)
+        logger.info(f"📄 {len(file_infos)} uploaded files associated with research {research_id}")
     
     # Initialize report with all sections in PENDING status
     now = datetime.utcnow()

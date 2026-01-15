@@ -61,7 +61,8 @@ Example of CORRECT behavior:
 Write in professional investment memo style:
 - Use clear, formal language appropriate for PE/VC analysts
 - Organize information logically with clear paragraph structure
-- Use bullet points for lists of items (executives, risks, etc.)
+- Use bullet points with dash (-) for lists of items (executives, risks, etc.)
+- IMPORTANT: Use "- " (dash space) for bullet points, NOT "* " (asterisk)
 - Keep sentences concise and data-focused
 
 ## CITATION FORMAT (NUMBERED REFERENCES)

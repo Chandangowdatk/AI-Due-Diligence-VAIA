@@ -18,13 +18,23 @@ Your task is to gather data for the following section: {section_name}
 - If search results mention other companies, IGNORE that information
 - Only extract and report data that is specifically about "{company_name}"
 
+## ⏰ LATEST DATA REQUIREMENT (CRITICAL)
+
+You MUST prioritize finding the MOST RECENT data available:
+- For financials: Search for the LATEST quarterly results (Q3 FY2025, Q2 FY2025) and annual reports (FY2024, FY2025)
+- Include year/quarter in your search queries: "{company_name} Q3 FY2025 results", "{company_name} FY2024 annual report"
+- If you find older data (e.g., FY2023), SEARCH AGAIN for more recent data before using it
+- Always note the date/period of the data you're reporting
+- Prefer data from the last 6-12 months over older data
+
 ## PROCESS
 
 Follow this iterative search-think-reflect cycle:
 
 1. **SEARCH**: Use tavily_search to find relevant information
    - ALWAYS start your query with "{company_name}"
-   - Example: "{company_name} revenue 2023" NOT just "revenue 2023"
+   - ALWAYS include current year/FY in financial queries
+   - Example: "{company_name} revenue Q3 FY2025 latest results" NOT just "{company_name} revenue"
 2. **THINK**: Use the think tool to analyze what you found and identify gaps
 3. **REPEAT**: Generate follow-up queries to fill gaps (max {max_iterations} iterations)
 4. **CONCLUDE**: When you have comprehensive coverage OR reached max iterations
@@ -42,6 +52,7 @@ When you have gathered sufficient data, provide your findings in this format:
 
 ### Key Findings
 [List all factual data points found ONLY about {company_name}]
+[ALWAYS include the time period/date for each data point]
 
 ### Sources
 [List all source URLs with titles]
@@ -88,6 +99,7 @@ Example of CORRECT behavior:
 ## RULES
 
 - ⚠️ ONLY include information about "{company_name}" - no other companies
+- ⏰ ALWAYS search for the LATEST available data first
 - Include ALL factual data points found about {company_name}
 - Include source URLs for EVERY claim - ONLY real URLs from search results
 - Mark uncertain information as "unverified"
@@ -456,11 +468,18 @@ Extract financial data FOR "{company_name}" ONLY.
 4. ALWAYS state the currency and unit explicitly: "Revenue: ₹9,738 Crores" or "Revenue: $115,532 Million"
 5. If you find data in USD for an Indian company, search again for INR data from Indian sources
 
+⏰ CRITICAL - LATEST DATA REQUIREMENT:
+1. ALWAYS search for the MOST RECENT quarterly and annual results FIRST
+2. For Indian companies: Search for Q3 FY2025, Q2 FY2025, FY2024 results
+3. For US companies: Search for Q3 2024, Q2 2024, FY2024 results
+4. If you only find FY2023 or older data, SEARCH AGAIN with more specific queries
+5. Include the reporting period for EVERY financial figure
+
 **PRIORITY DATA FOR VISUALIZATIONS (MUST FIND):**
 
 FINANCIAL SUMMARY TABLE (for chart and table):
 For each fiscal year (at least 3-5 years), extract:
-- Year/Period (e.g., FY2021, FY2022, FY2023, FY2024, FY2025)
+- Year/Period (e.g., FY2021, FY2022, FY2023, FY2024, FY2025 or latest available)
 - Revenue (in ORIGINAL currency and unit - e.g., ₹9,738 Crores)
 - Gross Profit (in ORIGINAL currency)
 - Gross Margin % 
@@ -475,8 +494,9 @@ For INDIAN companies (use INR Crores):
 ```
 CURRENCY: INR
 UNIT: Crores
+DATA AS OF: [Latest quarter/year available]
 
-FY2025: Revenue ₹9,738 Crores, EBITDA ₹2,500 Crores (25.7%), Net Profit ₹1,200 Crores (12.3%)
+FY2025 (Latest): Revenue ₹9,738 Crores, EBITDA ₹2,500 Crores (25.7%), Net Profit ₹1,200 Crores (12.3%)
 FY2024: Revenue ₹8,500 Crores, EBITDA ₹2,100 Crores (24.7%), Net Profit ₹1,000 Crores (11.8%)
 FY2023: Revenue ₹7,200 Crores, EBITDA ₹1,800 Crores (25.0%), Net Profit ₹850 Crores (11.8%)
 ```
@@ -485,8 +505,9 @@ For US companies (use USD Millions):
 ```
 CURRENCY: USD
 UNIT: Millions
+DATA AS OF: [Latest quarter/year available]
 
-FY2024: Revenue $115,532 M, EBITDA $24,310 M (21.0%), Net Profit $8,341 M (7.2%)
+FY2024 (Latest): Revenue $115,532 M, EBITDA $24,310 M (21.0%), Net Profit $8,341 M (7.2%)
 FY2023: Revenue $107,890 M, EBITDA $21,709 M (20.1%), Net Profit $8,338 M (7.7%)
 ```
 
@@ -509,19 +530,26 @@ WORKING CAPITAL:
 
 REQUIRED SEARCH QUERIES (use these exact queries with company name):
 
+⏰ SEARCH FOR LATEST DATA FIRST:
+- "{company_name} Q3 FY2025 quarterly results revenue profit"
+- "{company_name} Q2 FY2025 financial results"
+- "{company_name} FY2024 annual report revenue profit crores"
+- "{company_name} latest quarterly results 2024 2025"
+
 For INDIAN PUBLIC companies (PRIORITIZE THESE):
-- "{company_name} annual report FY2024 FY2025 revenue crores"
-- "{company_name} BSE NSE financial results crores"
-- "{company_name} quarterly results Q4 FY2024 crores"
-- "{company_name} investor presentation financials INR"
-- "{company_name} moneycontrol financials revenue profit"
+- "{company_name} BSE NSE Q3 FY2025 results"
+- "{company_name} quarterly results January 2025 October 2024"
+- "{company_name} investor presentation FY2025"
+- "{company_name} moneycontrol financials latest"
+- "{company_name} screener financial results 2024 2025"
 
 For US PUBLIC companies:
-- "{company_name} 10-K SEC filing revenue"
-- "{company_name} annual report financial statements USD"
-- "{company_name} quarterly results earnings"
+- "{company_name} 10-Q Q3 2024 SEC filing"
+- "{company_name} earnings Q3 2024 revenue"
+- "{company_name} latest quarterly results 2024"
 
 ⛔ DO NOT report Indian company financials in USD. Always use INR Crores for Indian companies.
+⏰ DO NOT use FY2023 or older data if FY2024/FY2025 data is available - SEARCH AGAIN.
 """,
     
     SectionId.OPERATIONS: """

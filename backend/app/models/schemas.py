@@ -11,12 +11,22 @@ from app.models.enums import SectionId, SectionStatus, ReportStatus, SourceType
 # API REQUEST MODELS
 # ─────────────────────────────────────────────────────────────────────────────
 
+class UploadedFileReference(BaseModel):
+    """Reference to a file uploaded to Gemini."""
+    filename: str = Field(..., description="Original filename")
+    gemini_file_name: str = Field(..., description="Gemini file name (e.g., 'files/abc123')")
+
+
 class ResearchRequest(BaseModel):
     """Request to initiate due diligence research."""
     company_name: str = Field(..., description="Company name to research")
     sections: Optional[list[SectionId]] = Field(
         default=None,
         description="Specific sections to research. If None, runs all 10 sections"
+    )
+    uploaded_files: Optional[list[UploadedFileReference]] = Field(
+        default=None,
+        description="References to files uploaded to Gemini for document analysis"
     )
 
 

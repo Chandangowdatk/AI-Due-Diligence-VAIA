@@ -107,18 +107,111 @@ export function SectionContent({ content, isLoading, error }: SectionContentProp
 }
 
 function formatContent(content: string): string {
-  return content
-    .replace(/^#### (.*$)/gim, '<h4 class="text-base font-semibold mt-5 mb-2 text-neutral-800 dark:text-white">$1</h4>')
-    .replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold mt-6 mb-3 text-neutral-800 dark:text-white">$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold mt-8 mb-4 text-neutral-900 dark:text-white">$1</h2>')
-    .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mt-8 mb-4 text-neutral-900 dark:text-white">$1</h1>')
-    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-neutral-900 dark:text-white">$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em class="text-neutral-600 dark:text-neutral-300">$1</em>')
-    .replace(/^- (.*$)/gim, '<li class="ml-4 text-neutral-600 dark:text-neutral-300 mb-1">$1</li>')
-    .replace(/\n\n/g, '</p><p class="mb-4 text-neutral-600 dark:text-neutral-300 leading-relaxed">')
-    .replace(/\n/g, '<br>')
-    .replace(/^(.+)$/gm, (match) => {
-      if (match.startsWith('<')) return match;
-      return `<p class="mb-4 text-neutral-600 dark:text-neutral-300 leading-relaxed">${match}</p>`;
-    });
+  // Normalize line endings and clean up extra whitespace
+  let formatted = content.replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n');
+  
+  // Convert * bullets to - bullets for consistency
+  // Handle both "* text" and "* **bold**" patterns
+  formatted = formatted.replace(/^\* /gm, '- ');
+  formatted = formatted.replace(/^\*\s+/gm, '- ');
+  
+  // Process inline formatting first (before splitting into lines)
+  // Bold - must come before italic to handle **text** vs *text*
+  formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // Italic - single asterisks not adjacent to other asterisks (be careful not to match bullet remnants)
+  formatted = formatted.replace(/(?<![*\-])\*([^*\n]+)\*(?!\*)/g, '<em>$1</em>');
+  // Inline code
+  formatted = formatted.replace(/`([^`]+)`/g, '<code>$1</code>');
+  
+  // Handle numbered lists (1. 2. 3. etc)
+  formatted = formatted.replace(/^(\d+)\. /gm, '{{NUM_LIST}}$1. ');
+  
+  // Split into lines for block-level processing
+  const lines = formatted.split('\n');
+  const processedLines: string[] = [];
+  let inBulletList = false;
+  let inNumberedList = false;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    
+    // Skip empty lines but close any open lists
+    if (!line) {
+      if (inBulletList) {
+        processedLines.push('</ul>');
+        inBulletList = false;
+      }
+      if (inNumberedList) {
+        processedLines.push('</ol>');
+        inNumberedList = false;
+      }
+      continue;
+    }
+    
+    // Headers
+    if (line.startsWith('#### ')) {
+      if (inBulletList) { processedLines.push('</ul>'); inBulletList = false; }
+      if (inNumberedList) { processedLines.push('</ol>'); inNumberedList = false; }
+      processedLines.push(`<h4>${line.substring(5)}</h4>`);
+      continue;
+    }
+    if (line.startsWith('### ')) {
+      if (inBulletList) { processedLines.push('</ul>'); inBulletList = false; }
+      if (inNumberedList) { processedLines.push('</ol>'); inNumberedList = false; }
+      processedLines.push(`<h3>${line.substring(4)}</h3>`);
+      continue;
+    }
+    if (line.startsWith('## ')) {
+      if (inBulletList) { processedLines.push('</ul>'); inBulletList = false; }
+      if (inNumberedList) { processedLines.push('</ol>'); inNumberedList = false; }
+      processedLines.push(`<h2>${line.substring(3)}</h2>`);
+      continue;
+    }
+    if (line.startsWith('# ')) {
+      if (inBulletList) { processedLines.push('</ul>'); inBulletList = false; }
+      if (inNumberedList) { processedLines.push('</ol>'); inNumberedList = false; }
+      processedLines.push(`<h1>${line.substring(2)}</h1>`);
+      continue;
+    }
+    
+    // Bullet points (- at start of line)
+    if (line.startsWith('- ')) {
+      if (inNumberedList) { processedLines.push('</ol>'); inNumberedList = false; }
+      if (!inBulletList) {
+        processedLines.push('<ul>');
+        inBulletList = true;
+      }
+      processedLines.push(`<li>${line.substring(2)}</li>`);
+      continue;
+    }
+    
+    // Numbered lists
+    if (line.startsWith('{{NUM_LIST}}')) {
+      if (inBulletList) { processedLines.push('</ul>'); inBulletList = false; }
+      if (!inNumberedList) {
+        processedLines.push('<ol>');
+        inNumberedList = true;
+      }
+      const listContent = line.replace(/^\{\{NUM_LIST\}\}\d+\.\s*/, '');
+      processedLines.push(`<li>${listContent}</li>`);
+      continue;
+    }
+    
+    // Regular paragraphs - close any open lists first
+    if (inBulletList) { processedLines.push('</ul>'); inBulletList = false; }
+    if (inNumberedList) { processedLines.push('</ol>'); inNumberedList = false; }
+    
+    // Check if it's already an HTML tag
+    if (line.startsWith('<')) {
+      processedLines.push(line);
+    } else {
+      processedLines.push(`<p>${line}</p>`);
+    }
+  }
+  
+  // Close any remaining open lists
+  if (inBulletList) processedLines.push('</ul>');
+  if (inNumberedList) processedLines.push('</ol>');
+  
+  return processedLines.join('\n');
 }

@@ -9,6 +9,20 @@ import { CompanyReport, SectionId } from '@/types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+// File upload response type
+export interface FileUploadResponse {
+  success: boolean;
+  filename: string;
+  gemini_file_name: string | null;
+  error: string | null;
+}
+
+// Uploaded file reference for research request
+export interface UploadedFileReference {
+  filename: string;
+  gemini_file_name: string;
+}
+
 class ApiClient {
   private baseUrl: string;
 
@@ -39,8 +53,42 @@ class ApiClient {
     return response.json();
   }
 
-  // Start new research
-  async startResearch(request: ResearchRequest): Promise<ResearchInitResponse> {
+  // Upload a single file to Gemini
+  async uploadFile(file: File): Promise<FileUploadResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const url = `${this.baseUrl}/api/files/upload`;
+    const response = await fetch(url, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      return {
+        success: false,
+        filename: file.name,
+        gemini_file_name: null,
+        error: `Upload failed: ${response.statusText}`,
+      };
+    }
+
+    return response.json();
+  }
+
+  // Start new research (with optional uploaded files)
+  async startResearch(
+    companyName: string,
+    uploadedFiles?: UploadedFileReference[]
+  ): Promise<ResearchInitResponse> {
+    const request: ResearchRequest & { uploaded_files?: UploadedFileReference[] } = {
+      company_name: companyName,
+    };
+    
+    if (uploadedFiles && uploadedFiles.length > 0) {
+      request.uploaded_files = uploadedFiles;
+    }
+
     return this.request<ResearchInitResponse>('/api/research', {
       method: 'POST',
       body: JSON.stringify(request),

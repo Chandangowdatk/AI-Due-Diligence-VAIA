@@ -58,7 +58,7 @@ export default function PrintReportPage() {
   return (
     <div className="print-report bg-white min-h-screen">
       {/* Cover Page */}
-      <div className="cover-page min-h-screen flex flex-col justify-center items-center p-12 bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900 text-white">
+      <div className="cover-page min-h-screen flex flex-col justify-center items-center p-12 bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900 text-white print:p-8">
         <div className="text-center max-w-3xl">
           {/* Logo */}
           <div className="w-20 h-20 bg-primary-500 rounded-2xl flex items-center justify-center mx-auto mb-8">
@@ -90,7 +90,7 @@ export default function PrintReportPage() {
           
           {/* Disclaimer */}
           <div className="mt-16 p-4 bg-navy-800/50 rounded-lg border border-navy-700">
-            <p className="text-xs text-navy-300 leading-relaxed">
+            <p className="text-xs text-navy-300 leading-relaxed text-left">
               <strong className="text-navy-200">Confidential:</strong> This report is generated using AI-powered research 
               and should be used for informational purposes only. All data should be independently verified 
               before making investment decisions.
@@ -100,7 +100,7 @@ export default function PrintReportPage() {
       </div>
 
       {/* Table of Contents */}
-      <div className="toc-page p-12 page-break-before">
+      <div className="toc-page p-12 print:p-0 print:pt-4" style={{ pageBreakBefore: 'always' }}>
         <h2 className="text-3xl font-bold text-navy-900 mb-8 pb-4 border-b-2 border-primary-500">
           Table of Contents
         </h2>
@@ -124,7 +124,6 @@ export default function PrintReportPage() {
                 <div className="flex items-center gap-2">
                   {isComplete && <CheckCircle className="text-emerald-500" size={18} />}
                   {isIncomplete && <AlertTriangle className="text-amber-500" size={18} />}
-                  <span className="text-navy-400 text-sm">Page {index + 3}</span>
                 </div>
               </div>
             );
@@ -141,16 +140,17 @@ export default function PrintReportPage() {
           <section
             key={sectionConfig.id}
             id={`section-${sectionConfig.id}`}
-            className="section-page p-12 page-break-before"
+            className="section-page p-12 print:p-0 print:pt-4"
+            style={{ pageBreakBefore: 'always' }}
           >
             {/* Section Header */}
             <div className="section-header mb-8">
               <div className="flex items-center gap-4 mb-4">
-                <span className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center text-xl font-bold text-primary-600">
+                <span className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center text-xl font-bold text-primary-600 print:w-10 print:h-10">
                   {index + 1}
                 </span>
                 <div>
-                  <h2 className="text-3xl font-bold text-navy-900">{section.section_name}</h2>
+                  <h2 className="text-3xl font-bold text-navy-900 print:text-2xl">{section.section_name}</h2>
                   {section.status === 'incomplete' && (
                     <div className="flex items-center gap-2 mt-1 text-amber-600">
                       <AlertTriangle size={14} />
@@ -175,7 +175,8 @@ export default function PrintReportPage() {
             {/* Content */}
             {section.formatted_content ? (
               <div
-                className="prose-print"
+                className="prose-print text-left"
+                style={{ textAlign: 'left' }}
                 dangerouslySetInnerHTML={{ __html: formatContent(section.formatted_content) }}
               />
             ) : (
@@ -205,8 +206,8 @@ export default function PrintReportPage() {
                 </h4>
                 <div className="grid gap-2">
                   {section.sources.map((source, i) => (
-                    <div key={i} className="text-xs text-navy-500 flex gap-2">
-                      <span className="text-navy-400 font-mono">[{i + 1}]</span>
+                    <div key={i} className="text-xs text-navy-500 flex gap-2 text-left">
+                      <span className="text-navy-400 font-mono flex-shrink-0">[{i + 1}]</span>
                       <span className="break-all">
                         {source.title !== 'Source' ? `${source.title} - ` : ''}{source.url}
                       </span>
@@ -220,7 +221,7 @@ export default function PrintReportPage() {
       })}
 
       {/* Back Cover / Disclaimer */}
-      <div className="back-cover p-12 page-break-before bg-navy-50 min-h-screen flex flex-col justify-center">
+      <div className="back-cover p-12 print:p-0 print:pt-4 bg-navy-50 min-h-screen flex flex-col justify-center" style={{ pageBreakBefore: 'always' }}>
         <div className="max-w-2xl mx-auto text-center">
           <div className="w-16 h-16 bg-navy-900 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <FileSearch className="text-white" size={28} />
@@ -257,18 +258,111 @@ export default function PrintReportPage() {
 }
 
 function formatContent(content: string): string {
-  return content
-    .replace(/^#### (.*$)/gim, '<h4 class="text-base font-semibold mt-5 mb-2 text-navy-800">$1</h4>')
-    .replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold mt-6 mb-3 text-navy-800">$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold mt-8 mb-4 text-navy-900">$1</h2>')
-    .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mt-8 mb-4 text-navy-900">$1</h1>')
-    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-navy-900">$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em class="text-navy-700">$1</em>')
-    .replace(/^- (.*$)/gim, '<li class="ml-4 text-navy-700 mb-1">$1</li>')
-    .replace(/\n\n/g, '</p><p class="mb-4 text-navy-700 leading-relaxed">')
-    .replace(/\n/g, '<br>')
-    .replace(/^(.+)$/gm, (match) => {
-      if (match.startsWith('<')) return match;
-      return `<p class="mb-4 text-navy-700 leading-relaxed">${match}</p>`;
-    });
+  // Normalize line endings and clean up extra whitespace
+  let formatted = content.replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n');
+  
+  // Convert * bullets to - bullets for consistency
+  // Handle both "* text" and "* **bold**" patterns
+  formatted = formatted.replace(/^\* /gm, '- ');
+  formatted = formatted.replace(/^\*\s+/gm, '- ');
+  
+  // Process inline formatting first (before splitting into lines)
+  // Bold - must come before italic to handle **text** vs *text*
+  formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // Italic - single asterisks not adjacent to other asterisks (be careful not to match bullet remnants)
+  formatted = formatted.replace(/(?<![*\-])\*([^*\n]+)\*(?!\*)/g, '<em>$1</em>');
+  // Inline code
+  formatted = formatted.replace(/`([^`]+)`/g, '<code>$1</code>');
+  
+  // Handle numbered lists (1. 2. 3. etc)
+  formatted = formatted.replace(/^(\d+)\. /gm, '{{NUM_LIST}}$1. ');
+  
+  // Split into lines for block-level processing
+  const lines = formatted.split('\n');
+  const processedLines: string[] = [];
+  let inBulletList = false;
+  let inNumberedList = false;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    
+    // Skip empty lines but close any open lists
+    if (!line) {
+      if (inBulletList) {
+        processedLines.push('</ul>');
+        inBulletList = false;
+      }
+      if (inNumberedList) {
+        processedLines.push('</ol>');
+        inNumberedList = false;
+      }
+      continue;
+    }
+    
+    // Headers
+    if (line.startsWith('#### ')) {
+      if (inBulletList) { processedLines.push('</ul>'); inBulletList = false; }
+      if (inNumberedList) { processedLines.push('</ol>'); inNumberedList = false; }
+      processedLines.push(`<h4>${line.substring(5)}</h4>`);
+      continue;
+    }
+    if (line.startsWith('### ')) {
+      if (inBulletList) { processedLines.push('</ul>'); inBulletList = false; }
+      if (inNumberedList) { processedLines.push('</ol>'); inNumberedList = false; }
+      processedLines.push(`<h3>${line.substring(4)}</h3>`);
+      continue;
+    }
+    if (line.startsWith('## ')) {
+      if (inBulletList) { processedLines.push('</ul>'); inBulletList = false; }
+      if (inNumberedList) { processedLines.push('</ol>'); inNumberedList = false; }
+      processedLines.push(`<h2>${line.substring(3)}</h2>`);
+      continue;
+    }
+    if (line.startsWith('# ')) {
+      if (inBulletList) { processedLines.push('</ul>'); inBulletList = false; }
+      if (inNumberedList) { processedLines.push('</ol>'); inNumberedList = false; }
+      processedLines.push(`<h1>${line.substring(2)}</h1>`);
+      continue;
+    }
+    
+    // Bullet points (- at start of line)
+    if (line.startsWith('- ')) {
+      if (inNumberedList) { processedLines.push('</ol>'); inNumberedList = false; }
+      if (!inBulletList) {
+        processedLines.push('<ul>');
+        inBulletList = true;
+      }
+      processedLines.push(`<li>${line.substring(2)}</li>`);
+      continue;
+    }
+    
+    // Numbered lists
+    if (line.startsWith('{{NUM_LIST}}')) {
+      if (inBulletList) { processedLines.push('</ul>'); inBulletList = false; }
+      if (!inNumberedList) {
+        processedLines.push('<ol>');
+        inNumberedList = true;
+      }
+      const listContent = line.replace(/^\{\{NUM_LIST\}\}\d+\.\s*/, '');
+      processedLines.push(`<li>${listContent}</li>`);
+      continue;
+    }
+    
+    // Regular paragraphs - close any open lists first
+    if (inBulletList) { processedLines.push('</ul>'); inBulletList = false; }
+    if (inNumberedList) { processedLines.push('</ol>'); inNumberedList = false; }
+    
+    // Check if it's already an HTML tag
+    if (line.startsWith('<')) {
+      processedLines.push(line);
+    } else {
+      processedLines.push(`<p>${line}</p>`);
+    }
+  }
+  
+  // Close any remaining open lists
+  if (inBulletList) processedLines.push('</ul>');
+  if (inNumberedList) processedLines.push('</ol>');
+  
+  return processedLines.join('\n');
 }

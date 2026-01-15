@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Sparkles, Zap, Globe, Shield, ArrowRight } from 'lucide-react';
-import { api } from '@/lib/api';
+import { Sparkles, Zap, Globe, Shield, ArrowRight, FileText, Brain, BarChart3 } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Navbar, Footer } from '@/components/layout';
 import { BackgroundOrbs } from '@/components/ui';
@@ -11,26 +9,6 @@ import { BackgroundOrbs } from '@/components/ui';
 export default function HomePage() {
   const router = useRouter();
   const { isDark, toggleTheme } = useTheme();
-  const [inputValue, setInputValue] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const suggestions = ['Reliance Industries', 'Tesla Inc', 'OpenAI', 'Stripe'];
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputValue.trim()) return;
-    
-    try {
-      setIsLoading(true);
-      setError(null);
-      const response = await api.startResearch({ company_name: inputValue });
-      router.push(`/report/${response.research_id}`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to start research');
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen relative font-sans text-neutral-900 dark:text-white selection:bg-brand-orange selection:text-white">
@@ -58,46 +36,36 @@ export default function HomePage() {
                 Our AI analyzes thousands of sources to deliver actionable investment insights.
               </p>
 
-              {/* Search Interface */}
-              <div className="w-full max-w-2xl relative z-20 animate-fade-in-up animation-delay-300">
-                <form onSubmit={handleSubmit} className="relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-brand-orange to-red-600 rounded-full opacity-20 group-hover:opacity-40 blur transition duration-500" />
-                  <div className="relative flex items-center bg-white dark:bg-[#0a0a0a] border border-neutral-200 dark:border-white/10 rounded-full p-2 pl-6 shadow-2xl transition-all group-hover:border-brand-orange/30 dark:group-hover:border-white/20">
-                    <Search className="w-6 h-6 text-neutral-400 dark:text-neutral-500 mr-4" />
-                    <input
-                      type="text"
-                      placeholder="Enter company name..."
-                      className="flex-grow bg-transparent text-lg text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-600 focus:outline-none py-3"
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      disabled={isLoading}
-                    />
-                    <button 
-                      type="submit"
-                      disabled={isLoading}
-                      className="bg-brand-orange text-white px-8 py-3 rounded-full font-medium hover:bg-red-600 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <span>{isLoading ? 'Starting...' : 'Research'}</span>
-                      {!isLoading && <ArrowRight className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </form>
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up animation-delay-300">
+                <button
+                  onClick={() => router.push('/research')}
+                  className="bg-brand-orange text-white px-8 py-4 rounded-full font-medium hover:bg-red-600 transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-lg shadow-brand-orange/25"
+                >
+                  <span>Get Started</span>
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="px-8 py-4 rounded-full font-medium border border-neutral-300 dark:border-white/20 hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors"
+                >
+                  Learn More
+                </button>
+              </div>
 
-                {error && (
-                  <p className="mt-4 text-red-500 text-sm">{error}</p>
-                )}
-
-                <div className="mt-6 flex flex-wrap justify-center items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
-                  <span>Try:</span>
-                  {suggestions.map((s) => (
-                    <button 
-                      key={s} 
-                      onClick={() => setInputValue(s)}
-                      className="px-3 py-1 rounded-full border border-neutral-300 dark:border-white/15 hover:bg-neutral-100 dark:hover:bg-white/10 text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors"
-                    >
-                      {s}
-                    </button>
-                  ))}
+              {/* Trust indicators */}
+              <div className="mt-16 flex flex-wrap justify-center items-center gap-8 text-sm text-neutral-500 dark:text-neutral-400 animate-fade-in-up animation-delay-400">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                  <span>10+ Report Sections</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                  <span>Real-time Data</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                  <span>Cited Sources</span>
                 </div>
               </div>
             </section>
@@ -125,20 +93,66 @@ export default function HomePage() {
                   title="Verified Sources"
                   description="All insights are cited from SEC filings, annual reports, and trusted news."
                 />
+                <FeatureCard 
+                  icon={<FileText className="w-6 h-6 text-purple-500 dark:text-purple-400" />}
+                  title="Document Analysis"
+                  description="Upload pitch decks, memos, and financials for deeper insights."
+                />
+                <FeatureCard 
+                  icon={<Brain className="w-6 h-6 text-pink-500 dark:text-pink-400" />}
+                  title="AI-Powered"
+                  description="Advanced language models extract and synthesize key information."
+                />
+                <FeatureCard 
+                  icon={<BarChart3 className="w-6 h-6 text-cyan-500 dark:text-cyan-400" />}
+                  title="Visual Insights"
+                  description="Interactive charts for financials, market share, and ownership."
+                />
+              </div>
+            </section>
+
+            {/* How It Works */}
+            <section className="px-6 max-w-7xl mx-auto w-full">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl font-bold mb-4 text-neutral-900 dark:text-white">How It Works</h2>
+                <p className="text-neutral-600 dark:text-neutral-400">Three simple steps to comprehensive due diligence.</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <StepCard 
+                  number="1"
+                  title="Enter Company"
+                  description="Type the name of any company you want to research."
+                />
+                <StepCard 
+                  number="2"
+                  title="Upload Documents"
+                  description="Optionally add pitch decks, memos, or financials for deeper analysis."
+                />
+                <StepCard 
+                  number="3"
+                  title="Get Report"
+                  description="Receive a comprehensive 10-section due diligence report in minutes."
+                />
               </div>
             </section>
             
             {/* CTA Section */}
             <section id="how-it-works" className="px-6 max-w-7xl mx-auto w-full text-center">
-              <div className="glass-panel p-12 rounded-[2.5rem] relative overflow-hidden group cursor-pointer">
+              <div className="glass-panel p-12 rounded-[2.5rem] relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-br from-brand-orange/10 to-purple-900/10 dark:from-brand-orange/20 dark:to-purple-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 relative z-10 text-neutral-900 dark:text-white">Ready to build the future?</h2>
-                <p className="text-xl text-neutral-600 dark:text-neutral-400 mb-8 relative z-10">Join the innovative teams using AI for due diligence.</p>
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 relative z-10 text-neutral-900 dark:text-white">
+                  Ready to get started?
+                </h2>
+                <p className="text-xl text-neutral-600 dark:text-neutral-400 mb-8 relative z-10">
+                  Join innovative teams using AI for due diligence.
+                </p>
                 <button 
-                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                  className="relative z-10 bg-neutral-900 dark:bg-white text-white dark:text-black px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform duration-200"
+                  onClick={() => router.push('/research')}
+                  className="relative z-10 bg-brand-orange text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-red-600 hover:scale-105 transition-all shadow-lg shadow-brand-orange/25 flex items-center gap-2 mx-auto"
                 >
-                  Start Your Research
+                  <span>Start Your Research</span>
+                  <ArrowRight className="w-5 h-5" />
                 </button>
               </div>
             </section>
@@ -162,6 +176,18 @@ function FeatureCard({ icon, title, description }: { icon: React.ReactNode, titl
       </div>
       <h3 className="text-xl font-bold mb-3 text-neutral-900 dark:text-white">{title}</h3>
       <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">{description}</p>
+    </div>
+  );
+}
+
+function StepCard({ number, title, description }: { number: string, title: string, description: string }) {
+  return (
+    <div className="text-center">
+      <div className="w-16 h-16 rounded-full bg-brand-orange/10 flex items-center justify-center mx-auto mb-6">
+        <span className="text-2xl font-bold text-brand-orange">{number}</span>
+      </div>
+      <h3 className="text-xl font-bold mb-3 text-neutral-900 dark:text-white">{title}</h3>
+      <p className="text-neutral-600 dark:text-neutral-400">{description}</p>
     </div>
   );
 }
