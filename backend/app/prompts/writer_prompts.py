@@ -62,14 +62,23 @@ Write in professional investment memo style:
 - Use clear, formal language appropriate for PE/VC analysts
 - Organize information logically with clear paragraph structure
 - Use bullet points for lists of items (executives, risks, etc.)
-- Include inline citations as [Source: URL] after factual claims
 - Keep sentences concise and data-focused
 
-## CITATION FORMAT
+## CITATION FORMAT (NUMBERED REFERENCES)
 
-For every factual claim, include the source:
-- "Revenue reached ₹9,738 Crores in FY2024 [Source: https://example.com/article]"
-- "The company was founded in 1966 by Dhirubhai Ambani [Source: https://crunchbase.com/company]"
+Use numbered citations [1], [2], [3], etc. inline only. Do NOT list sources at the end - they are displayed separately in the UI.
+
+**Inline citation format:**
+- "Revenue reached ₹9,738 Crores in FY2024 [1]"
+- "The company was founded in 1966 by Dhirubhai Ambani [2]"
+- "Market share increased to 35% [3]"
+
+**Rules for numbered citations:**
+- Start numbering from [1] for each section
+- Each unique URL gets ONE number (reuse the same number if citing the same source multiple times)
+- Place the citation number immediately after the fact it supports
+- Do NOT add a "Sources:" section at the end - the UI handles source display separately
+- ONLY use URLs that appear in the raw data - NEVER invent URLs
 
 ## TONE
 
@@ -120,11 +129,17 @@ RAW DATA:
 
 Write a professional, well-structured section that:
 1. Preserves ALL factual data points from the raw data above ONLY about {company_name if company_name else "the target company"}
-2. Includes ALL source citations inline (ONLY URLs from the raw data)
+2. Uses NUMBERED citations [1], [2], [3] inline (ONLY URLs from the raw data)
 3. Uses formal investment memo language
 4. Organizes information logically
 5. Notes any data gaps mentioned
 6. EXCLUDES any information about companies other than {company_name if company_name else "the target company"}
+
+## CITATION FORMAT (IMPORTANT)
+- Use numbered citations inline: "Revenue grew 15% [1]" NOT "[Source: URL]"
+- Do NOT add a "Sources:" section at the end - the UI displays sources separately
+- Each unique URL gets ONE number (reuse if citing same source multiple times)
+- ONLY use URLs from the raw data - NEVER invent URLs
 
 ⛔ CRITICAL: 
 - Do NOT add ANY information that is not in the raw data above
