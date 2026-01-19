@@ -242,6 +242,9 @@ Extract high-level company information:
 - Primary business model
 - Investment highlights and key concerns
 - Recent significant developments
+
+⚠️ WORD LIMIT: Keep the Executive Summary within 600 words maximum.
+Focus on the most critical information and be concise.
 """,
     
     SectionId.COMPANY_OVERVIEW: """

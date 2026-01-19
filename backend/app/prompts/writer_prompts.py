@@ -121,7 +121,16 @@ def get_writer_prompt(section_name: str, raw_data: str, company_name: str = "") 
 - Every fact must be specifically about "{company_name}"
 """
     
+    # Add word limit for Executive Summary
+    word_limit_instruction = ""
+    if section_name.lower() == "executive summary":
+        word_limit_instruction = """
+⚠️ WORD LIMIT: Keep this Executive Summary within 600 words maximum.
+Be concise and focus on the most critical information.
+"""
+    
     return f"""Transform the following raw research data into professional due diligence prose.
+{word_limit_instruction}
 
 SECTION: {section_name}
 {company_instruction}

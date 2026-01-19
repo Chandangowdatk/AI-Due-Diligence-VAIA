@@ -16,6 +16,7 @@ wheels/
 #other directories
 data/
 langchain_docs/
+playground/
 
 
 #other files

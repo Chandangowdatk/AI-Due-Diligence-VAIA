@@ -34,7 +34,6 @@ export function CapTable({ data, title }: CapTableProps) {
 
   // Sort by value descending
   const sortedData = [...data].sort((a, b) => b.value - a.value);
-  const total = sortedData.reduce((sum, item) => sum + item.value, 0);
 
   return (
     <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
@@ -124,14 +123,6 @@ export function CapTable({ data, title }: CapTableProps) {
                 </tr>
               ))}
             </tbody>
-            <tfoot>
-              <tr className="bg-gray-50">
-                <td colSpan={2} className="py-3 px-2 font-semibold text-gray-700">Total</td>
-                <td className="py-3 px-2 text-right font-bold text-gray-900">
-                  {total.toFixed(2)}%
-                </td>
-              </tr>
-            </tfoot>
           </table>
         </div>
       </div>
